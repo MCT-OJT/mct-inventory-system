@@ -27,7 +27,7 @@ export default function AuthenticatedLayout({ children }) {
                     active={url === '/sales'}
                 />
             </SideBar>
-            <main>{children}</main>
+            <main className="flex-1">{children}</main>
         </div>
     );
 }
