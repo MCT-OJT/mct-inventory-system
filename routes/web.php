@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\InventoryController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -14,15 +15,19 @@ Route::get('/', function () {
     ]);
 });
 
-
-
 Route::middleware(['auth', 'verified'])->group(function () {
+    //* GENERAL ROUTES
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    //* INVENTORY ROUTES
     Route::get('/inventory', function () {
         return Inertia::render('Inventory');
     })->name('inventory');
+    Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+
+    //! TO BE MODIFIED
     Route::get('/sales', function () {
         return Inertia::render('Sales');
     })->name('sales');
