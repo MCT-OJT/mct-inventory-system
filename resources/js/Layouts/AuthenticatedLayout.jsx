@@ -1,4 +1,5 @@
 import SideBar, { SidebarItem } from '@/Components/SideBar';
+import { Toaster } from '@/components/ui/toaster';
 import { usePage } from '@inertiajs/react';
 import { HandCoins, LayoutDashboard, PackageCheck } from 'lucide-react';
 
@@ -28,6 +29,7 @@ export default function AuthenticatedLayout({ children }) {
                 />
             </SideBar>
             <main className="flex-1">{children}</main>
+            <Toaster />
         </div>
     );
 }
