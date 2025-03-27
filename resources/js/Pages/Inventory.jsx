@@ -5,10 +5,60 @@ import { Input } from '@/components/ui/input';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { CircleCheckBig, FileDown } from 'lucide-react';
-// import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
+
 import { AddItem } from '@/Components/inventory/addItem';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+
 export default function Inventory() {
+    //! DUMMY DATA FOR RENDERING PURPOSE, DYNAMIC SOON
+    const assets = [
+        {
+            assetTag: 'MCT25-PRI001',
+            assetName: 'GIANT',
+            assetType: 'MNT',
+            status: 'Available',
+            userIncharge: 'Lymuel Bracamonte',
+        },
+        {
+            assetTag: 'MCT25-PRI001',
+            assetName: 'GIANT',
+            assetType: 'MNT',
+            status: 'Available',
+            userIncharge: 'Lymuel Bracamonte',
+        },
+        {
+            assetTag: 'MCT25-PRI001',
+            assetName: 'GIANT',
+            assetType: 'MNT',
+            status: 'Available',
+            userIncharge: 'Lymuel Bracamonte',
+        },
+        {
+            assetTag: 'MCT25-PRI001',
+            assetName: 'GIANT',
+            assetType: 'MNT',
+            status: 'Available',
+            userIncharge: 'Lymuel Bracamonte',
+        },
+    ];
+
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
@@ -27,7 +77,7 @@ export default function Inventory() {
                 <Card />
             </div>
 
-            <div className="m-10 rounded-lg border p-7 shadow">
+            <div className="m-10 rounded-lg border bg-white p-7 shadow">
                 <div className="flex items-center justify-between">
                     <div className="mb-3">
                         <h1 className="text-3xl font-bold tracking-tight">
@@ -54,104 +104,45 @@ export default function Inventory() {
                         <AddItem />
                     </div>
                 </div>
-                <div className="flex flex-col overflow-x-auto border">
-                    <div className="sm:-mx-6 lg:-mx-8">
-                        <div className="inline-block min-w-full sm:px-6 lg:px-8">
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full text-left text-sm font-light">
-                                    <thead className="h-1 border-b bg-primary font-medium">
-                                        <tr className="">
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-4 text-center text-white"
-                                            >
-                                                Asset Tag
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-4 text-center text-white"
-                                            >
-                                                Asset Name
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-4 text-center text-white"
-                                            >
-                                                Asset Type
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-4 text-center text-white"
-                                            >
-                                                Status
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                className="px-6 py-4 text-center text-white"
-                                            >
-                                                User Incharge
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr className="border-b dark:border-neutral-500">
-                                            <td className="whitespace-nowrap px-6 py-4 text-center font-medium">
-                                                1
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                        </tr>
-                                        <tr className="border-b dark:border-neutral-500">
-                                            <td className="whitespace-nowrap px-6 py-4 text-center font-medium">
-                                                2
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                        </tr>
-                                        <tr className="border-b">
-                                            <td className="whitespace-nowrap px-6 py-4 text-center font-medium">
-                                                3
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-center">
-                                                Cell
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Table>
+                    <TableCaption>List of current IT assets.</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Asset Tag</TableHead>
+                            <TableHead>Asset Name</TableHead>
+                            <TableHead>Asset Type</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>User Incharge</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {assets.map((asset) => (
+                            <TableRow key={asset.assetTag}>
+                                <TableCell>{asset.assetTag}</TableCell>
+                                <TableCell>{asset.assetName}</TableCell>
+                                <TableCell>{asset.assetType}</TableCell>
+                                <TableCell>{asset.status}</TableCell>
+                                <TableCell>{asset.userIncharge}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                <Pagination className="mt-5">
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
             </div>
         </AuthenticatedLayout>
     );
