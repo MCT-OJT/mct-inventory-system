@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
     Dialog,
     DialogContent,
@@ -10,8 +11,16 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-import { PackagePlus } from 'lucide-react';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { useForm } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { CalendarIcon, PackagePlus } from 'lucide-react';
 
 import {
     DropdownMenu,
@@ -22,216 +31,398 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
-
-import { Calendar } from '@/components/ui/calendar';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
 export function AddItem() {
-    const [date, setDate] = useState();
+    const { toast } = useToast();
+
+    const [selectedAtype, setSelectedAtype] = useState('- Select -');
+    const [selectedAstatus, setSelectedAstatus] = useState('- Select -');
+    const [selectedUincharge, setSelectedUincharge] = useState('- Select -');
+
+    const handleSelectAtype = (type) => {
+        setSelectedAtype(type);
+        setData('asset_type', type);
+    };
+
+    const handleSelectAstatus = (type) => {
+        setSelectedAstatus(type);
+        setData('status', type);
+    };
+
+    const handleSelectUincharge = (type) => {
+        setSelectedUincharge(type);
+        setData('user_incharge', type);
+    };
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        serial_number: '',
+        asset_name: '',
+        asset_type: '',
+        status: '',
+        date_acquired: '',
+        deployed_date: '',
+        user_incharge: '',
+        remarks: '',
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post('/inventory', {
+            onSuccess: () => reset(),
+        });
+    };
+
+    const assetTypes = [
+        'Monitor',
+        'System Unit',
+        'Laptop',
+        'Server',
+        'UPS',
+        'Printer',
+        'iPad',
+        'Smartphone',
+        'Accessories',
+    ];
+
+    const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
+
+    //! SOON TO IMPLEMENT DYNAMIC USER INCHARGE
+    const userIncharge = [
+        'Lymuel Bracamonte',
+        'Roderick Danzing',
+        'Hubert Obsioma',
+        'Kenneth Lumandog',
+        'Kenneth Hinlo',
+    ];
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button
-                    className="bg-primary text-white hover:bg-darkerPrimary hover:text-white"
-                    variant="outline"
-                >
+                <Button className="bg-primary text-white hover:bg-darkerPrimary">
                     <PackagePlus />
                     Add Item
                 </Button>
             </DialogTrigger>
-            <DialogContent className="h-96 overflow-y-auto sm:max-w-[425px]">
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add Item</DialogTitle>
                     <DialogDescription>
-                        Add item to your inventory here. Click save when you're
-                        done.
+                        Add an item to your inventory.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="serial" className="text-right">
-                            Serial Number
-                        </Label>
-                        <Input id="serial" className="col-span-3" />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="asset-name" className="text-right">
-                            Asset Name
-                        </Label>
-                        <Input id="asset-name" className="col-span-3" />
-                    </div>
+                <form onSubmit={handleSubmit}>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="serial" className="text-right">
+                                Serial Number
+                            </Label>
+                            <Input
+                                id="serial"
+                                value={data.serial_number}
+                                onChange={(e) =>
+                                    setData('serial_number', e.target.value)
+                                }
+                                className="col-span-3"
+                            />
+                            {errors.serial_number && (
+                                <p className="text-red-500">
+                                    {errors.serial_number}
+                                </p>
+                            )}
+                        </div>
 
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="asset-type" className="text-right">
-                            Asset Type
-                        </Label>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="w-32">
-                                    - Select -
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>ASSETS</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>Monitor</DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        System Unit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>Laptop</DropdownMenuItem>
-                                    <DropdownMenuItem>Server</DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem>UPS</DropdownMenuItem>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="asset-name" className="text-right">
+                                Asset Name
+                            </Label>
+                            <Input
+                                id="asset-name"
+                                value={data.asset_name}
+                                onChange={(e) =>
+                                    setData('asset_name', e.target.value)
+                                }
+                                className="col-span-3"
+                            />
+                            {errors.asset_name && (
+                                <p className="text-red-500">
+                                    {errors.asset_name}
+                                </p>
+                            )}
+                        </div>
 
-                                    <DropdownMenuItem>Printer</DropdownMenuItem>
-                                </DropdownMenuGroup>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>iPad</DropdownMenuItem>
-                                <DropdownMenuItem>Smarthphone</DropdownMenuItem>
-                                <DropdownMenuItem>Accessories</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="asset-type" className="text-right">
-                            Date Acquired
-                        </Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={'outline'}
-                                    className={cn(
-                                        'w-32 justify-start text-left font-normal',
-                                        !date && 'text-muted-foreground',
-                                    )}
-                                >
-                                    <CalendarIcon />
-                                    {date ? (
-                                        format(date, 'PPP')
-                                    ) : (
-                                        <span>Pick a date</span>
-                                    )}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                className="w-auto p-0"
-                                align="start"
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="asset-type" className="text-right">
+                                Asset Type
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-32">
+                                        {selectedAtype}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        ASSETS
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {assetTypes.map((type) => (
+                                            <DropdownMenuItem
+                                                key={type}
+                                                onClick={() =>
+                                                    handleSelectAtype(type)
+                                                }
+                                            >
+                                                {type}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.asset_type && (
+                                <p className="text-red-500">
+                                    {errors.asset_type}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="date-acquired"
+                                className="text-right"
                             >
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="asset-type" className="text-right">
-                            Status
-                        </Label>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="w-32">
-                                    - Select -
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>STATUS</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>Available</DropdownMenuItem>
-                                <DropdownMenuItem>Deployed</DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    Decommissioned
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>Listed</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="asset-type" className="text-right">
-                            Deployed Date
-                        </Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={'outline'}
-                                    className={cn(
-                                        'w-32 justify-start text-left font-normal',
-                                        !date && 'text-muted-foreground',
-                                    )}
+                                Date Acquired
+                            </Label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                            !data.date_acquired &&
+                                                'min-w-[120px] text-muted-foreground',
+                                        )}
+                                    >
+                                        <CalendarIcon />
+                                        {data.date_acquired ? (
+                                            format(
+                                                new Date(data.date_acquired),
+                                                'PPP',
+                                            )
+                                        ) : (
+                                            <span>Pick a date</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                    className="w-auto p-0"
+                                    align="start"
                                 >
-                                    <CalendarIcon />
-                                    {date ? (
-                                        format(date, 'PPP')
-                                    ) : (
-                                        <span>Pick a date</span>
-                                    )}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                className="w-auto p-0"
-                                align="start"
+                                    <Calendar
+                                        mode="single"
+                                        selected={data.date_acquired}
+                                        onSelect={(date) =>
+                                            setData(
+                                                'date_acquired',
+                                                date
+                                                    ? format(date, 'yyyy-MM-dd')
+                                                    : '',
+                                            )
+                                        }
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            {errors.date_acquired && (
+                                <p className="text-red-500">
+                                    {errors.date_acquired}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="status" className="text-right">
+                                Status
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="w-32">
+                                        {selectedAstatus}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        STATUS
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {Astatus.map((type) => (
+                                            <DropdownMenuItem
+                                                key={type}
+                                                onClick={() =>
+                                                    handleSelectAstatus(type)
+                                                }
+                                            >
+                                                {type}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.status && (
+                                <p className="text-red-500">{errors.status}</p>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="date-deployed"
+                                className="text-right"
                             >
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                                Date Deployed
+                            </Label>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                            !data.deployed_date &&
+                                                'min-w-[120px] text-muted-foreground',
+                                            selectedAstatus !== 'Deployed' &&
+                                                'cursor-not-allowed opacity-50',
+                                        )}
+                                        disabled={
+                                            selectedAstatus !== 'Deployed'
+                                        }
+                                    >
+                                        <CalendarIcon />
+                                        {data.deployed_date ? (
+                                            format(
+                                                new Date(data.deployed_date),
+                                                'PPP',
+                                            )
+                                        ) : (
+                                            <span>Pick a date</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                {selectedAstatus === 'Deployed' && (
+                                    <PopoverContent
+                                        className="w-auto p-0"
+                                        align="start"
+                                    >
+                                        <Calendar
+                                            mode="single"
+                                            selected={data.deployed_date}
+                                            onSelect={(date) =>
+                                                setData(
+                                                    'deployed_date',
+                                                    date
+                                                        ? format(
+                                                              date,
+                                                              'yyyy-MM-dd',
+                                                          )
+                                                        : '',
+                                                )
+                                            }
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                )}
+                            </Popover>
+                            {errors.deployed_date && (
+                                <p className="text-red-500">
+                                    {errors.deployed_date}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="user-incharge"
+                                className="text-right"
+                            >
+                                User Incharge
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                            selectedAstatus !== 'Deployed' &&
+                                                'cursor-not-allowed opacity-50',
+                                        )}
+                                        disabled={
+                                            selectedAstatus !== 'Deployed'
+                                        }
+                                    >
+                                        {selectedUincharge}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        USER INCHARGE
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {userIncharge.map((type) => (
+                                            <DropdownMenuItem
+                                                key={type}
+                                                onClick={() =>
+                                                    handleSelectUincharge(type)
+                                                }
+                                            >
+                                                {type}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.user_incharge && (
+                                <p className="text-red-500">
+                                    {errors.user_incharge}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-4 items-baseline gap-4">
+                            <Label htmlFor="remarks" className="text-right">
+                                Remarks
+                            </Label>
+                            <Textarea
+                                id="remarks"
+                                className="col-span-3 h-20"
+                                value={data.remarks}
+                                onChange={(e) =>
+                                    setData('remarks', e.target.value)
+                                }
+                            />
+                            {errors.remarks && (
+                                <p className="text-red-500">{errors.remarks}</p>
+                            )}
+                        </div>
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="asset-type" className="text-right">
-                            User Incharge
-                        </Label>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="w-64">
-                                    - Select -
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                                <DropdownMenuLabel>STATUS</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>Available</DropdownMenuItem>
-                                <DropdownMenuItem>Deployed</DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    Decommissioned
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>Listed</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                    <div className="grid grid-cols-4 items-baseline gap-4">
-                        <Label htmlFor="asset-type" className="text-right">
-                            Remarks
-                        </Label>
-                        <Textarea className="h-60 w-64" />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button
-                        type="submit"
-                        className="bg-green-700 text-white hover:bg-green-800 hover:text-white"
-                    >
-                        Save Changes
-                    </Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <Button
+                            type="submit"
+                            className="bg-green-700 text-white hover:bg-green-800"
+                            disabled={processing}
+                            onClick={() => {
+                                toast({
+                                    title: 'Success',
+                                    description: 'Successfully added the item.',
+                                    className: 'bg-green-600 text-white',
+                                });
+                            }}
+                        >
+                            {processing ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     );
