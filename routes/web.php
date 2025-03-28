@@ -22,10 +22,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     //* INVENTORY ROUTES
-    Route::get('/inventory', function () {
-        return Inertia::render('Inventory');
-    })->name('inventory');
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
 
     //! TO BE MODIFIED
     Route::get('/sales', function () {

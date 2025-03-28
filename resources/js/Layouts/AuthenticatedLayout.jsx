@@ -18,7 +18,7 @@ export default function AuthenticatedLayout({ children }) {
                 <SidebarItem
                     icon={<PackageCheck size={20} />}
                     text="Inventory"
-                    href={route('inventory')}
+                    href={route('inventory.index')}
                     active={url === '/inventory'}
                 />
                 <SidebarItem

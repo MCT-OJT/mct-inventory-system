@@ -1,21 +1,24 @@
+import { AddItem } from '@/Components/inventory/addItem';
 import Card from '@/Components/inventory/card';
 import { Button } from '@/components/ui/button';
-
 import { Input } from '@/components/ui/input';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import { CircleCheckBig, FileDown } from 'lucide-react';
+import { router } from '@inertiajs/react';
 
-import { AddItem } from '@/Components/inventory/addItem';
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
     PaginationItem,
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Table,
     TableBody,
@@ -25,53 +28,34 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
+import { CircleCheckBig, FileDown } from 'lucide-react';
+import { useState } from 'react';
 
-export default function Inventory() {
-    //! DUMMY DATA FOR RENDERING PURPOSE, DYNAMIC SOON
-    const assets = [
-        {
-            assetTag: 'MCT25-PRI001',
-            assetName: 'GIANT',
-            assetType: 'MNT',
-            status: 'Available',
-            userIncharge: 'Lymuel Bracamonte',
-        },
-        {
-            assetTag: 'MCT25-PRI001',
-            assetName: 'GIANT',
-            assetType: 'MNT',
-            status: 'Available',
-            userIncharge: 'Lymuel Bracamonte',
-        },
-        {
-            assetTag: 'MCT25-PRI001',
-            assetName: 'GIANT',
-            assetType: 'MNT',
-            status: 'Available',
-            userIncharge: 'Lymuel Bracamonte',
-        },
-        {
-            assetTag: 'MCT25-PRI001',
-            assetName: 'GIANT',
-            assetType: 'MNT',
-            status: 'Available',
-            userIncharge: 'Lymuel Bracamonte',
-        },
-    ];
+export default function Inventory({ assets }) {
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredAssets = assets.filter((asset) =>
+        Object.values(asset).some((value) =>
+            value?.toString().toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+    );
+
+    const totalPages = Math.ceil(filteredAssets.length / rowsPerPage);
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const paginatedAssets = filteredAssets.slice(
+        startIndex,
+        startIndex + rowsPerPage,
+    );
 
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
             <div className="m-10 flex gap-4">
-                <Card
-                    Icon={<CircleCheckBig />}
-                    title="asd"
-                    value="asd"
-                    valuePostfix="asd"
-                    increase="asd"
-                    increasePostfix="asd"
-                    description="asd"
-                />
+                <Card Icon={<CircleCheckBig />} title="asd" value="asd" />
                 <Card />
                 <Card />
                 <Card />
@@ -89,18 +73,16 @@ export default function Inventory() {
                     </div>
                     <div className="flex gap-3">
                         <Input
-                            type="email"
+                            type="text"
                             placeholder="Search"
                             className="w-52"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <Button
-                            className="bg-green-700 text-white hover:bg-green-800 hover:text-white"
-                            variant="outline"
-                        >
+                        <Button className="bg-green-700 text-white hover:bg-green-800">
                             <FileDown />
                             Export Data
                         </Button>
-
                         <AddItem />
                     </div>
                 </div>
@@ -116,30 +98,83 @@ export default function Inventory() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {assets.map((asset) => (
-                            <TableRow key={asset.assetTag}>
-                                <TableCell>{asset.assetTag}</TableCell>
-                                <TableCell>{asset.assetName}</TableCell>
-                                <TableCell>{asset.assetType}</TableCell>
+                        {paginatedAssets.map((asset) => (
+                            <TableRow
+                                key={asset.id}
+                                className="cursor-pointer hover:bg-gray-100"
+                                onClick={() =>
+                                    router.visit(`/inventory/${asset.id}`)
+                                }
+                            >
+                                <TableCell>{asset.asset_tag}</TableCell>
+                                <TableCell>{asset.asset_name}</TableCell>
+                                <TableCell>{asset.asset_type}</TableCell>
                                 <TableCell>{asset.status}</TableCell>
-                                <TableCell>{asset.userIncharge}</TableCell>
+                                <TableCell>{asset.user_incharge}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
+                <div className="flex items-center space-x-2">
+                    <label className="hidden text-sm font-normal md:inline">
+                        Rows per page
+                    </label>
+                    <Select
+                        value={String(rowsPerPage)}
+                        onValueChange={(value) => {
+                            setRowsPerPage(Number(value));
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="h-8 w-[70px] dark:bg-neutral-700">
+                            <SelectValue>{rowsPerPage}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent
+                            side="top"
+                            className="dark:bg-neutral-700"
+                        >
+                            <SelectItem value="5">5</SelectItem>
+                            <SelectItem value="10">10</SelectItem>
+                            <SelectItem value="20">20</SelectItem>
+                            <SelectItem value="50">50</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
                 <Pagination className="mt-5">
                     <PaginationContent>
                         <PaginationItem>
-                            <PaginationPrevious href="#" />
+                            <PaginationPrevious
+                                href="#"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.max(prev - 1, 1),
+                                    )
+                                }
+                            />
                         </PaginationItem>
+                        {[...Array(totalPages)].map((_, i) => (
+                            <PaginationItem key={i}>
+                                <PaginationLink
+                                    href="#"
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    className={
+                                        currentPage === i + 1 ? 'font-bold' : ''
+                                    }
+                                >
+                                    {i + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        ))}
                         <PaginationItem>
-                            <PaginationLink href="#">1</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext href="#" />
+                            <PaginationNext
+                                href="#"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.min(prev + 1, totalPages),
+                                    )
+                                }
+                            />
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>

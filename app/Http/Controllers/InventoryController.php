@@ -4,8 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Inventory;
+use Inertia\Inertia;
+
 class InventoryController extends Controller
 {
+    //* DISPLAY TABLE AND DATA IN DATABASE UWU
+    public function index()
+    {
+        $inventory = Inventory::all();
+        return Inertia::render('Inventory', ['assets' => $inventory]);
+    }
+
+
     //* STORE AN ITEM TO INVENTORY <3
     public function store(Request $request)
     {
@@ -34,6 +44,16 @@ class InventoryController extends Controller
             'remarks' => $request->remarks,
         ]);
 
-        return redirect()->route('inventory');
+        return redirect()->back();
     }
+
+    //* SHOW SPECIFIC ITEM FULL DETAILS ^-^
+    public function show($id)
+{
+    $assets = Inventory::findOrFail($id);
+
+    return Inertia::render('Inventory/ItemSpecific', [
+        'assets' => $assets,
+    ]);
+}
 }
