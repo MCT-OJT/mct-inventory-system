@@ -1,31 +1,54 @@
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Settings2 } from 'lucide-react';
+
 export default function Card({
-    title,
-    increase,
-    increasePostfix = '',
-    description,
+    activeColor,
+    iconBg,
     Icon,
-    design,
+    status,
+    count,
+    lastUpdated,
+    onClick,
 }) {
     return (
-        <div
-            className={`flex-1 rounded-xl bg-white p-4 shadow dark:bg-neutral-800 ${design}`}
-        >
-            <div className="flex items-center justify-between pb-3">
-                <h3 className="font-semibold">{title}</h3>
-                {Icon}
-            </div>
-            <div>
-                <p className="pb-1.5 text-3xl font-bold">asd</p>
-                <p className="text-sm text-gray-400">
-                    {increase && (
-                        <span className="text-green-500">
-                            +{increase}
-                            {increasePostfix}
-                        </span>
-                    )}{' '}
-                    {description}
-                </p>
-            </div>
-        </div>
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <button
+                        onClick={onClick}
+                        className={`flex flex-1 items-center justify-between rounded-2xl bg-white p-7 shadow transition-all hover:shadow-xl focus:ring-4 ${activeColor} active:scale-95`}
+                    >
+                        <div className="text-left">
+                            <div
+                                className={`mb-3 flex h-14 w-14 items-center justify-center rounded-full ${iconBg}`}
+                            >
+                                {Icon}
+                            </div>
+                            <p className="text-4xl font-bold text-black dark:text-white">
+                                {count}
+                            </p>
+                            <p className="text-l font-bold text-black dark:text-white">
+                                {status}
+                            </p>
+
+                            <p className="text-xs text-gray-500 dark:text-gray-500">
+                                Last Updated: {lastUpdated}
+                            </p>
+                        </div>
+                        <div className="mr-[36px]">
+                            <Settings2 size={52} className="text-gray-600" />
+                        </div>
+                    </button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-gray-600">
+                    <p>Filter by {status} </p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
     );
 }
