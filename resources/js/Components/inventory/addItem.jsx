@@ -70,7 +70,21 @@ export function AddItem() {
     const handleSubmit = (e) => {
         e.preventDefault();
         post('/inventory', {
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                toast({
+                    title: 'Success',
+                    description: 'Successfully added the item.',
+                    className: 'bg-green-300 text-green-900 border-none',
+                });
+                reset();
+            },
+            onError: () => {
+                toast({
+                    title: 'Failed',
+                    description: 'Something went wrong.',
+                    className: 'bg-red-300 text-red-900 border-none',
+                });
+            },
         });
     };
 
@@ -411,13 +425,6 @@ export function AddItem() {
                             type="submit"
                             className="bg-green-700 text-white hover:bg-green-800"
                             disabled={processing}
-                            onClick={() => {
-                                toast({
-                                    title: 'Success',
-                                    description: 'Successfully added the item.',
-                                    className: 'bg-green-600 text-white',
-                                });
-                            }}
                         >
                             {processing ? 'Saving...' : 'Save Changes'}
                         </Button>
