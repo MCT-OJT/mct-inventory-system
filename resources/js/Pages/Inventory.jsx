@@ -30,18 +30,56 @@ import {
 } from '@/components/ui/table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { CircleCheckBig, FileDown } from 'lucide-react';
+import {
+    Archive,
+    CircleCheckBig,
+    FileDown,
+    MonitorCheck,
+    Tag,
+} from 'lucide-react';
 import { useState } from 'react';
 
 export default function Inventory({ assets }) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState(null);
 
-    const filteredAssets = assets.filter((asset) =>
-        Object.values(asset).some((value) =>
-            value?.toString().toLowerCase().includes(searchQuery.toLowerCase()),
-        ),
+    const getStatusLastUpdated = (status) => {
+        const filteredAssets = assets
+            .filter((asset) => asset.status === status)
+            .map((asset) => new Date(asset.updated_at));
+
+        if (filteredAssets.length === 0) return 'No updates';
+
+        const latestUpdate = new Date(Math.max(...filteredAssets));
+        return latestUpdate.toLocaleDateString('en-PH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'Asia/Manila',
+        });
+    };
+
+    const getStatusCount = (status) =>
+        assets.filter((asset) => asset.status === status).length;
+
+    const handleCardClick = (status) => {
+        setSelectedStatus(status === selectedStatus ? null : status);
+        setCurrentPage(1);
+    };
+
+    console.log('assets', assets);
+
+    const filteredAssets = assets.filter(
+        (asset) =>
+            (selectedStatus ? asset.status === selectedStatus : true) &&
+            Object.values(asset).some((value) =>
+                value
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
+            ),
     );
 
     const totalPages = Math.ceil(filteredAssets.length / rowsPerPage);
@@ -55,10 +93,58 @@ export default function Inventory({ assets }) {
         <AuthenticatedLayout>
             <Head title="Dashboard" />
             <div className="m-10 flex gap-4">
-                <Card Icon={<CircleCheckBig />} title="asd" value="asd" />
-                <Card />
-                <Card />
-                <Card />
+                <Card
+                    Icon={<CircleCheckBig className="text-green-600" />}
+                    status={'Available assets'}
+                    count={getStatusCount('Available')}
+                    lastUpdated={getStatusLastUpdated('Available')}
+                    iconBg={'bg-green-100'}
+                    activeColor={
+                        selectedStatus === 'Available'
+                            ? 'focus:ring-green-300'
+                            : 'focus:ring-transparent'
+                    }
+                    onClick={() => handleCardClick('Available')}
+                />
+                <Card
+                    Icon={<MonitorCheck className="text-blue-600" />}
+                    status={'Deployed assets'}
+                    count={getStatusCount('Deployed')}
+                    lastUpdated={getStatusLastUpdated('Deployed')}
+                    iconBg={'bg-blue-100'}
+                    activeColor={
+                        selectedStatus === 'Deployed'
+                            ? 'focus:ring-blue-300'
+                            : 'focus:ring-transparent'
+                    }
+                    onClick={() => handleCardClick('Deployed')}
+                />
+                <Card
+                    Icon={<Archive className="text-gray-600" />}
+                    status={'Decommissioned assets'}
+                    count={getStatusCount('Decommissioned')}
+                    lastUpdated={getStatusLastUpdated('Decommissioned')}
+                    iconBg={'bg-gray-100'}
+                    activeColor={
+                        selectedStatus === 'Decommissioned'
+                            ? 'focus:ring-black'
+                            : 'focus:ring-transparent'
+                    }
+                    onClick={() => handleCardClick('Decommissioned')}
+                />
+                <Card
+                    Icon={<Tag className="text-yellow-600" />}
+                    status={'Listed assets'}
+                    count={getStatusCount('Listed')}
+                    lastUpdated={getStatusLastUpdated('Listed')}
+                    iconBg={'bg-yellow-100'}
+                    activeColor={
+                        selectedStatus === 'Listed'
+                            ? 'focus:ring-yellow-300'
+                            : 'focus:ring-transparent'
+                    }
+                    onClick={() => handleCardClick('Listed')}
+                />
             </div>
 
             <div className="m-10 rounded-lg border bg-white p-7 shadow">
@@ -94,7 +180,13 @@ export default function Inventory({ assets }) {
                             <TableHead>Asset Name</TableHead>
                             <TableHead>Asset Type</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>User Incharge</TableHead>
+                            {![
+                                'Available',
+                                'Decommissioned',
+                                'Listed',
+                            ].includes(selectedStatus) && (
+                                <TableHead>User Incharge</TableHead>
+                            )}{' '}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -110,7 +202,13 @@ export default function Inventory({ assets }) {
                                 <TableCell>{asset.asset_name}</TableCell>
                                 <TableCell>{asset.asset_type}</TableCell>
                                 <TableCell>{asset.status}</TableCell>
-                                <TableCell>{asset.user_incharge}</TableCell>
+                                {![
+                                    'Available',
+                                    'Decommissioned',
+                                    'Listed',
+                                ].includes(selectedStatus) && (
+                                    <TableCell>{asset.user_incharge}</TableCell>
+                                )}{' '}
                             </TableRow>
                         ))}
                     </TableBody>
