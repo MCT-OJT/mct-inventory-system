@@ -16,6 +16,7 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained('users', 'id')
                 ->nullOnDelete();
+            $table->foreignId('employee_id')->nullable()->constrained('employees')->nullOnDelete();
             $table->string(column: 'serial_number');
             $table->string(column: 'asset_tag');
             $table->string(column: 'asset_name');
