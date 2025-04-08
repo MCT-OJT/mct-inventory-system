@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\Inventory;
 use Inertia\Inertia;
@@ -11,8 +12,9 @@ class InventoryController extends Controller
     //* DISPLAY TABLE AND DATA IN DATABASE UWU
     public function index()
     {
-        $inventory = Inventory::all();
-        return Inertia::render('Inventory', ['assets' => $inventory]);
+        $inventory = Inventory::with('employee')->get();
+        $employee = Employee::all();
+        return Inertia::render('Inventory', ['assets' => $inventory, 'employee' => $employee]);
     }
 
 
@@ -27,7 +29,7 @@ class InventoryController extends Controller
             'status' => 'required|string',
             'date_acquired' => 'required|date',
             'deployed_date' => 'nullable|date',
-            'user_incharge' => 'nullable|string',
+            'employee_id' => 'nullable|integer',
             'remarks' => 'nullable|string',
         ]);
 
@@ -40,7 +42,7 @@ class InventoryController extends Controller
             'status' => $request->status,
             'date_acquired' => $request->date_acquired,
             'deployed_date' => $request->deployed_date,
-            'user_incharge' => $request->user_incharge,
+            'employee_id' => $request->employee_id,
             'remarks' => $request->remarks,
         ]);
 
@@ -49,11 +51,11 @@ class InventoryController extends Controller
 
     //* SHOW SPECIFIC ITEM FULL DETAILS ^-^
     public function show($id)
-{
-    $assets = Inventory::findOrFail($id);
+    {
+        $asset = Inventory::with('employee')->findOrFail($id);
 
-    return Inertia::render('Inventory/ItemSpecific', [
-        'assets' => $assets,
-    ]);
-}
+        return Inertia::render('Inventory/ItemSpecific', [
+            'asset' => $asset
+        ]);
+    }
 }

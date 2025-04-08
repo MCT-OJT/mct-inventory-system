@@ -39,7 +39,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Inventory({ assets }) {
+export default function Inventory({ assets, employee }) {
+    console.log('ASSETS INVENTORY', assets);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
@@ -68,8 +69,6 @@ export default function Inventory({ assets }) {
         setSelectedStatus(status === selectedStatus ? null : status);
         setCurrentPage(1);
     };
-
-    console.log('assets', assets);
 
     const filteredAssets = assets.filter(
         (asset) =>
@@ -169,7 +168,7 @@ export default function Inventory({ assets }) {
                             <FileDown />
                             Export Data
                         </Button>
-                        <AddItem />
+                        <AddItem employee={employee} />
                     </div>
                 </div>
                 <Table>
@@ -207,7 +206,9 @@ export default function Inventory({ assets }) {
                                     'Decommissioned',
                                     'Listed',
                                 ].includes(selectedStatus) && (
-                                    <TableCell>{asset.user_incharge}</TableCell>
+                                    <TableCell>
+                                        {asset.employee?.name || ''}
+                                    </TableCell>
                                 )}{' '}
                             </TableRow>
                         ))}

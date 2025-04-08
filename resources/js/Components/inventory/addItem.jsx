@@ -34,7 +34,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
-export function AddItem() {
+export function AddItem({ employee }) {
     const { toast } = useToast();
 
     const [selectedAtype, setSelectedAtype] = useState('- Select -');
@@ -51,9 +51,10 @@ export function AddItem() {
         setData('status', type);
     };
 
-    const handleSelectUincharge = (type) => {
+    const handleSelectUincharge = (type, id) => {
         setSelectedUincharge(type);
-        setData('user_incharge', type);
+        setData('employee_id', id);
+        console.log('handle select emp id', id);
     };
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -63,7 +64,7 @@ export function AddItem() {
         status: '',
         date_acquired: '',
         deployed_date: '',
-        user_incharge: '',
+        employee_id: '',
         remarks: '',
     });
 
@@ -101,15 +102,6 @@ export function AddItem() {
     ];
 
     const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
-
-    //! SOON TO IMPLEMENT DYNAMIC USER INCHARGE
-    const userIncharge = [
-        'Lymuel Bracamonte',
-        'Roderick Danzing',
-        'Hubert Obsioma',
-        'Kenneth Lumandog',
-        'Kenneth Hinlo',
-    ];
 
     return (
         <Dialog>
@@ -383,14 +375,17 @@ export function AddItem() {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {userIncharge.map((type) => (
+                                        {employee.map((emp) => (
                                             <DropdownMenuItem
-                                                key={type}
+                                                key={emp.id}
                                                 onClick={() =>
-                                                    handleSelectUincharge(type)
+                                                    handleSelectUincharge(
+                                                        emp.name,
+                                                        emp.id,
+                                                    )
                                                 }
                                             >
-                                                {type}
+                                                {emp.name}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>
