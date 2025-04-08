@@ -16,7 +16,7 @@ class Inventory extends Model
         'status',
         'date_acquired',
         'deployed_date',
-        'user_incharge',
+        'employee_id',
         'remarks'
     ];
 
@@ -33,4 +33,8 @@ class Inventory extends Model
         });
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }
