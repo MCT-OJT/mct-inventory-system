@@ -1,7 +1,24 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function Dashboard() {
+    const [file, setFile] = useState(null);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const data = new FormData();
+        data.append('file', file);
+
+        console.log('Uploading file...');
+
+        router.post('/upload', data, {
+            onFinish: () => {
+                console.log('Upload finished.');
+            },
+        });
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -14,10 +31,14 @@ export default function Dashboard() {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            Dashboard
-                        </div>
+                    <div className="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
+                        <form onSubmit={handleSubmit}>
+                            <input
+                                type="file"
+                                onChange={(e) => setFile(e.target.files[0])}
+                            />
+                            <button type="submit">Uploads</button>
+                        </form>
                     </div>
                 </div>
             </div>
