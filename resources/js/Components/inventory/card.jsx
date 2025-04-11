@@ -4,7 +4,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Settings2 } from 'lucide-react';
 
 export default function Card({
     activeColor,
@@ -39,9 +38,6 @@ export default function Card({
                             <p className="text-xs text-gray-500 dark:text-gray-500">
                                 Last Updated: {lastUpdated}
                             </p>
-                        </div>
-                        <div className="mr-[36px]">
-                            <Settings2 size={52} className="text-gray-600" />
                         </div>
                     </button>
                 </TooltipTrigger>

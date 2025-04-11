@@ -89,6 +89,8 @@ export function AddItem({ employee }) {
         });
     };
 
+    const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
+
     const assetTypes = [
         'Monitor',
         'System Unit',
@@ -100,9 +102,6 @@ export function AddItem({ employee }) {
         'Smartphone',
         'Accessories',
     ];
-
-    const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
-
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -120,6 +119,7 @@ export function AddItem({ employee }) {
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="grid gap-4 py-4">
+                        {/* SERIAL NUMBER INPUT FIELD */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="serial" className="text-right">
                                 Serial Number
@@ -138,7 +138,7 @@ export function AddItem({ employee }) {
                                 </p>
                             )}
                         </div>
-
+                        {/* ASSET NAME INPUT FIELD */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="asset-name" className="text-right">
                                 Asset Name
@@ -157,7 +157,9 @@ export function AddItem({ employee }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            ASSET TYPE DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="asset-type" className="text-right">
                                 Asset Type
@@ -193,7 +195,63 @@ export function AddItem({ employee }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            MODEL DROPDOWN
+                         */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="user-incharge"
+                                className="text-right"
+                            >
+                                Asset Model
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                            selectedAstatus !== 'Deployed' &&
+                                                'cursor-not-allowed opacity-50',
+                                        )}
+                                        disabled={
+                                            selectedAstatus !== 'Deployed'
+                                        }
+                                    >
+                                        {selectedUincharge}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        ASSET MODEL
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {employee.map((emp) => (
+                                            <DropdownMenuItem
+                                                key={emp.id}
+                                                onClick={() =>
+                                                    handleSelectUincharge(
+                                                        emp.name,
+                                                        emp.id,
+                                                    )
+                                                }
+                                            >
+                                                {emp.name}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.user_incharge && (
+                                <p className="text-red-500">
+                                    {errors.user_incharge}
+                                </p>
+                            )}
+                        </div>
+                        {/*
+                            DATE ACQUIRED PICKER
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="date-acquired"
@@ -247,7 +305,9 @@ export function AddItem({ employee }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            ASSET STATUS DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="status" className="text-right">
                                 Status
@@ -281,7 +341,9 @@ export function AddItem({ employee }) {
                                 <p className="text-red-500">{errors.status}</p>
                             )}
                         </div>
-
+                        {/*
+                            DATE DEPLOYED PICKER
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="date-deployed"
@@ -345,7 +407,9 @@ export function AddItem({ employee }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            USER INCHARGE DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="user-incharge"
@@ -397,7 +461,9 @@ export function AddItem({ employee }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            ASSET TYPE DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-baseline gap-4">
                             <Label htmlFor="remarks" className="text-right">
                                 Remarks
@@ -415,6 +481,7 @@ export function AddItem({ employee }) {
                             )}
                         </div>
                     </div>
+                    {/* SAVE CHANGES */}
                     <DialogFooter>
                         <Button
                             type="submit"

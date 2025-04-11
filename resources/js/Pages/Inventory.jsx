@@ -119,14 +119,14 @@ export default function Inventory({ assets, employee }) {
                     onClick={() => handleCardClick('Deployed')}
                 />
                 <Card
-                    Icon={<Archive className="text-gray-600" />}
+                    Icon={<Archive className="text-red-600" />}
                     status={'Decommissioned assets'}
                     count={getStatusCount('Decommissioned')}
                     lastUpdated={getStatusLastUpdated('Decommissioned')}
-                    iconBg={'bg-gray-100'}
+                    iconBg={'bg-red-100'}
                     activeColor={
                         selectedStatus === 'Decommissioned'
-                            ? 'focus:ring-black'
+                            ? 'focus:ring-red-300'
                             : 'focus:ring-transparent'
                     }
                     onClick={() => handleCardClick('Decommissioned')}
