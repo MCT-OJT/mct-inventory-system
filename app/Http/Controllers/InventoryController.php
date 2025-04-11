@@ -58,4 +58,14 @@ class InventoryController extends Controller
             'asset' => $asset
         ]);
     }
+
+    //* DELETE SPECIFIC ITEM IN DATABASE yieeee <3
+    public function destroy($id)
+    {
+        $record = Inventory::findOrFail($id);
+        $record->delete();
+
+        return redirect()->route('inventory.index');
+    }
+
 }
