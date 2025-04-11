@@ -1,3 +1,5 @@
+import { DeleteItem } from '@/Components/inventory/specificItem/deleteItem';
+import { EditItem } from '@/Components/inventory/specificItem/editItem';
 import InfoCard from '@/Components/inventory/specificItem/infoCard';
 import InfoCardField from '@/Components/inventory/specificItem/infoCardField';
 import Status from '@/Components/inventory/specificItem/status';
@@ -6,7 +8,7 @@ import { Label } from '@/Components/ui/label';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { getDateString } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
-import { BookUser, ClipboardList, Images, OctagonAlert } from 'lucide-react';
+import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
 export default function Inventory({ asset }) {
     console.log('asset SULOD', asset);
     const formattedCreatedAt = getDateString(asset.created_at);
@@ -18,10 +20,18 @@ export default function Inventory({ asset }) {
     return (
         <AuthenticatedLayout>
             <Head title={`${asset.asset_tag}`} />
-            <Button className="mb-4 ml-12 mt-12" onClick={() => history.back()}>
-                Back
-            </Button>
-            <div className="ml-12 mr-12 grid gap-6 md:grid-cols-3">
+            <div className="ml-12 mr-12 flex justify-between">
+                <Button className="mb-4 mt-12" onClick={() => history.back()}>
+                    <Undo2 />
+                    Back
+                </Button>
+                <div className="mt-12">
+                    <EditItem asset={asset} />
+                    <DeleteItem id={asset.id} />
+                </div>
+            </div>
+
+            <div className="ml-12 mr-12 grid auto-rows-fr grid-rows-2 gap-6 md:grid-cols-3">
                 <InfoCard
                     LabelIcon={OctagonAlert}
                     label="Asset Details"
@@ -59,11 +69,11 @@ export default function Inventory({ asset }) {
                         <Status condition={asset.status} />
                     </div>
                 </InfoCard>
-                <div className="flex flex-col gap-6">
+                <div className="row-span-2 flex h-full flex-col gap-6">
                     <InfoCard
                         LabelIcon={BookUser}
                         label="Deployment Details"
-                        className="row-span-2"
+                        className="row-span-2 h-2/3"
                     >
                         <InfoCardField
                             label="Deployed Date"
@@ -81,17 +91,18 @@ export default function Inventory({ asset }) {
                             label="Department"
                             value={asset.employee?.department ?? 'N/A'}
                         />
+                        <InfoCardField label="Remarks" value={asset.remarks} />
                     </InfoCard>
                     <InfoCard
-                        LabelIcon={ClipboardList}
-                        label="Remarks"
-                        contentClassName="block"
+                        LabelIcon={History}
+                        label="Repair History"
+                        className="row-span-2 h-1/3"
                     >
                         <InfoCardField
-                            label="Remarks"
-                            value={asset.remarks}
-                            className="h-40"
+                            label=""
+                            value={'TEST: Christian Jericho'}
                         />
+                        <InfoCardField label="" value={'TEST: May 16, 2025'} />
                     </InfoCard>
                 </div>
                 <InfoCard
