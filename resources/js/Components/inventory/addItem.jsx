@@ -34,33 +34,52 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
-export function AddItem({ employee }) {
+export function AddItem({ employee, models }) {
+    //*NEW
+    const uniqueTypes = [...new Set(models.map((item) => item.asset_type))];
+
+    //! HERE
+    const [selectedAtype, setSelectedAtype] = useState('- Select -');
+    const [filteredModels, setFilteredModels] = useState([]);
+
+    //! HERE
+    const handleSelectAtype = (asset_type) => {
+        setSelectedAtype(asset_type);
+        setSelectedModelName('- Select -');
+        setData('asset_type', asset_type);
+        const filtered = models.filter(
+            (model) => model.asset_type === asset_type,
+        );
+        setFilteredModels(filtered);
+    };
+
     const { toast } = useToast();
 
-    const [selectedAtype, setSelectedAtype] = useState('- Select -');
     const [selectedAstatus, setSelectedAstatus] = useState('- Select -');
     const [selectedUincharge, setSelectedUincharge] = useState('- Select -');
-
-    const handleSelectAtype = (type) => {
-        setSelectedAtype(type);
-        setData('asset_type', type);
-    };
+    const [selectedModelName, setSelectedModelName] = useState('- Select -');
 
     const handleSelectAstatus = (type) => {
         setSelectedAstatus(type);
         setData('status', type);
     };
 
-    const handleSelectUincharge = (type, id) => {
-        setSelectedUincharge(type);
+    const handleSelectUincharge = (name, id) => {
+        setSelectedUincharge(name);
         setData('employee_id', id);
-        console.log('handle select emp id', id);
+        console.log('handle select emp NAME', name);
+    };
+
+    const handleSelectAssetModel = (model_name) => {
+        setSelectedModelName(model_name);
+        setData('model_name', model_name);
     };
 
     const { data, setData, post, processing, errors, reset } = useForm({
         serial_number: '',
         asset_name: '',
         asset_type: '',
+        model_name: '',
         status: '',
         date_acquired: '',
         deployed_date: '',
@@ -69,6 +88,7 @@ export function AddItem({ employee }) {
     });
 
     const handleSubmit = (e) => {
+        console.log('SULOD FORM DATA NOW LODS', data);
         e.preventDefault();
         post('/inventory', {
             onSuccess: () => {
@@ -91,17 +111,6 @@ export function AddItem({ employee }) {
 
     const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
 
-    const assetTypes = [
-        'Monitor',
-        'System Unit',
-        'Laptop',
-        'Server',
-        'UPS',
-        'Printer',
-        'iPad',
-        'Smartphone',
-        'Accessories',
-    ];
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -176,14 +185,16 @@ export function AddItem({ employee }) {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {assetTypes.map((type) => (
+                                        {uniqueTypes.map((asset_type) => (
                                             <DropdownMenuItem
-                                                key={type}
+                                                key={asset_type}
                                                 onClick={() =>
-                                                    handleSelectAtype(type)
+                                                    handleSelectAtype(
+                                                        asset_type,
+                                                    )
                                                 }
                                             >
-                                                {type}
+                                                {asset_type}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>
@@ -211,14 +222,9 @@ export function AddItem({ employee }) {
                                         variant="outline"
                                         className={cn(
                                             'w-fit justify-start px-3 text-left font-normal',
-                                            selectedAstatus !== 'Deployed' &&
-                                                'cursor-not-allowed opacity-50',
                                         )}
-                                        disabled={
-                                            selectedAstatus !== 'Deployed'
-                                        }
                                     >
-                                        {selectedUincharge}
+                                        {selectedModelName}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
@@ -227,17 +233,16 @@ export function AddItem({ employee }) {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {employee.map((emp) => (
+                                        {filteredModels.map((model) => (
                                             <DropdownMenuItem
-                                                key={emp.id}
+                                                key={model.model_name}
                                                 onClick={() =>
-                                                    handleSelectUincharge(
-                                                        emp.name,
-                                                        emp.id,
+                                                    handleSelectAssetModel(
+                                                        model.model_name,
                                                     )
                                                 }
                                             >
-                                                {emp.name}
+                                                {model.model_name}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>
