@@ -3,16 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AssetModel extends Model
+class Assets extends Model
 {
-    use HasFactory;
-    protected $table = 'asset_models';
+    // use HasFactory;
+    protected $table = 'assets';
 
     protected $fillable = [
         'asset_type',
-        'model_name',
+        'asset_brand',
     ];
     public function inventories()
     {

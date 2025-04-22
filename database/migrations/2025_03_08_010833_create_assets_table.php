@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asset_models', function (Blueprint $table) {
+        Schema::create('assets', function (Blueprint $table) {
             $table->id();
             $table->string('asset_type');
-            $table->string('model_name');
+            $table->string('asset_brand');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asset_models');
+        Schema::dropIfExists('assets');
     }
 };
