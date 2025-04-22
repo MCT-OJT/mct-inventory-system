@@ -59,7 +59,7 @@ export function EditItem({ asset }) {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         serial_number: '',
-        asset_name: '',
+        asset_brand: '',
         asset_type: '',
         status: '',
         date_acquired: '',
@@ -144,15 +144,15 @@ export function EditItem({ asset }) {
                             </Label>
                             <Input
                                 id="asset-name"
-                                value={data.asset_name}
+                                value={data.asset_brand}
                                 onChange={(e) =>
-                                    setData('asset_name', e.target.value)
+                                    setData('asset_brand', e.target.value)
                                 }
                                 className="col-span-3"
                             />
-                            {errors.asset_name && (
+                            {errors.asset_brand && (
                                 <p className="text-red-500">
-                                    {errors.asset_name}
+                                    {errors.asset_brand}
                                 </p>
                             )}
                         </div>

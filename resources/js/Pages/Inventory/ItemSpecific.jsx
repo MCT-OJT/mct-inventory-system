@@ -39,8 +39,8 @@ export default function Inventory({ asset }) {
                 >
                     <InfoCardField label="Asset Tag" value={asset.asset_tag} />
                     <InfoCardField
-                        label="Asset Name"
-                        value={asset.asset_name}
+                        label="Asset Brand"
+                        value={asset.asset_brand}
                     />
                     <InfoCardField
                         label="Asset Type"

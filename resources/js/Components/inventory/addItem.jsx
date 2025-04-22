@@ -34,30 +34,30 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
-export function AddItem({ employee, models }) {
+export function AddItem({ employee, assets }) {
     //*NEW
-    const uniqueTypes = [...new Set(models.map((item) => item.asset_type))];
+    const uniqueTypes = [...new Set(assets.map((item) => item.asset_type))];
 
     //! HERE
     const [selectedAtype, setSelectedAtype] = useState('- Select -');
-    const [filteredModels, setFilteredModels] = useState([]);
+    const [filteredBrands, setFilteredBrands] = useState([]);
 
     //! HERE
     const handleSelectAtype = (asset_type) => {
         setSelectedAtype(asset_type);
         setSelectedModelName('- Select -');
         setData('asset_type', asset_type);
-        const filtered = models.filter(
-            (model) => model.asset_type === asset_type,
+        const filtered = assets.filter(
+            (asset) => asset.asset_type === asset_type,
         );
-        setFilteredModels(filtered);
+        setFilteredBrands(filtered);
     };
 
     const { toast } = useToast();
 
     const [selectedAstatus, setSelectedAstatus] = useState('- Select -');
     const [selectedUincharge, setSelectedUincharge] = useState('- Select -');
-    const [selectedModelName, setSelectedModelName] = useState('- Select -');
+    const [selectedBrandName, setSelectedModelName] = useState('- Select -');
 
     const handleSelectAstatus = (type) => {
         setSelectedAstatus(type);
@@ -70,16 +70,15 @@ export function AddItem({ employee, models }) {
         console.log('handle select emp NAME', name);
     };
 
-    const handleSelectAssetModel = (model_name) => {
-        setSelectedModelName(model_name);
-        setData('model_name', model_name);
+    const handleSelectAssetBrand = (asset_brand) => {
+        setSelectedModelName(asset_brand);
+        setData('asset_brand', asset_brand);
     };
 
     const { data, setData, post, processing, errors, reset } = useForm({
         serial_number: '',
-        asset_name: '',
+        asset_brand: '',
         asset_type: '',
-        model_name: '',
         status: '',
         date_acquired: '',
         deployed_date: '',
@@ -88,7 +87,7 @@ export function AddItem({ employee, models }) {
     });
 
     const handleSubmit = (e) => {
-        console.log('SULOD FORM DATA NOW LODS', data);
+        console.log('npw 10am', data);
         e.preventDefault();
         post('/inventory', {
             onSuccess: () => {
@@ -147,25 +146,7 @@ export function AddItem({ employee, models }) {
                                 </p>
                             )}
                         </div>
-                        {/* ASSET NAME INPUT FIELD */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="asset-name" className="text-right">
-                                Asset Name
-                            </Label>
-                            <Input
-                                id="asset-name"
-                                value={data.asset_name}
-                                onChange={(e) =>
-                                    setData('asset_name', e.target.value)
-                                }
-                                className="col-span-3"
-                            />
-                            {errors.asset_name && (
-                                <p className="text-red-500">
-                                    {errors.asset_name}
-                                </p>
-                            )}
-                        </div>
+
                         {/*
                             ASSET TYPE DROPDOWN
                          */}
@@ -207,14 +188,14 @@ export function AddItem({ employee, models }) {
                             )}
                         </div>
                         {/*
-                            MODEL DROPDOWN
+                            ASSET BRAND DROPDOWN
                          */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="user-incharge"
                                 className="text-right"
                             >
-                                Asset Model
+                                Asset Brand
                             </Label>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -224,25 +205,25 @@ export function AddItem({ employee, models }) {
                                             'w-fit justify-start px-3 text-left font-normal',
                                         )}
                                     >
-                                        {selectedModelName}
+                                        {selectedBrandName}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
                                     <DropdownMenuLabel>
-                                        ASSET MODEL
+                                        ASSET BRAND
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {filteredModels.map((model) => (
+                                        {filteredBrands.map((brand) => (
                                             <DropdownMenuItem
-                                                key={model.model_name}
+                                                key={brand.asset_brand}
                                                 onClick={() =>
-                                                    handleSelectAssetModel(
-                                                        model.model_name,
+                                                    handleSelectAssetBrand(
+                                                        brand.asset_brand,
                                                     )
                                                 }
                                             >
-                                                {model.model_name}
+                                                {brand.asset_brand}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>

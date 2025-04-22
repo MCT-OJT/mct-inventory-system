@@ -39,15 +39,14 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Inventory({ assets, employee, models }) {
-    console.log('ASSETS INVENTORY PAGE', assets);
+export default function Inventory({ inventory, employee, assets }) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedStatus, setSelectedStatus] = useState(null);
 
     const getStatusLastUpdated = (status) => {
-        const filteredAssets = assets
+        const filteredAssets = inventory
             .filter((asset) => asset.status === status)
             .map((asset) => new Date(asset.updated_at));
 
@@ -63,14 +62,14 @@ export default function Inventory({ assets, employee, models }) {
     };
 
     const getStatusCount = (status) =>
-        assets.filter((asset) => asset.status === status).length;
+        inventory.filter((asset) => asset.status === status).length;
 
     const handleCardClick = (status) => {
         setSelectedStatus(status === selectedStatus ? null : status);
         setCurrentPage(1);
     };
 
-    const filteredAssets = assets.filter(
+    const filteredAssets = inventory.filter(
         (asset) =>
             (selectedStatus ? asset.status === selectedStatus : true) &&
             Object.values(asset).some((value) =>
@@ -168,7 +167,7 @@ export default function Inventory({ assets, employee, models }) {
                             <FileDown />
                             Export Data
                         </Button>
-                        <AddItem employee={employee} models={models} />
+                        <AddItem employee={employee} assets={assets} />
                     </div>
                 </div>
                 <Table>
@@ -176,7 +175,7 @@ export default function Inventory({ assets, employee, models }) {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Asset Tag</TableHead>
-                            <TableHead>Asset Name</TableHead>
+                            <TableHead>Asset Brand</TableHead>
                             <TableHead>Asset Type</TableHead>
                             <TableHead>Status</TableHead>
                             {![
@@ -198,7 +197,7 @@ export default function Inventory({ assets, employee, models }) {
                                 }
                             >
                                 <TableCell>{asset.asset_tag}</TableCell>
-                                <TableCell>{asset.asset_name}</TableCell>
+                                <TableCell>{asset.asset_brand}</TableCell>
                                 <TableCell>{asset.asset_type}</TableCell>
                                 <TableCell>{asset.status}</TableCell>
                                 {![
