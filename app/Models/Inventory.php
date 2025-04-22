@@ -13,12 +13,12 @@ class Inventory extends Model
     protected $fillable = [
         'user_id',
         'serial_number',
-        'asset_name',
+        'asset_brand',
         'status',
         'date_acquired',
         'deployed_date',
         'employee_id',
-        'asset_model_id',
+        'asset_id',
         'remarks'
     ];
 
@@ -27,12 +27,17 @@ class Inventory extends Model
         parent::boot();
 
         static::creating(function ($inventory) {
-            $inventory->load('assetModel');
-            $assetType = strtoupper(substr($inventory->assetModel->asset_type, 0, 3));
+            $asset = $inventory->asset;
+
+            if (!$asset) {
+                throw new \Exception("Asset not found for ID: {$inventory->asset_id}");
+            }
+
+            $assetType = strtoupper(substr($asset->asset_type, 0, 3));
             $year = substr($inventory->date_acquired, 2, 2);
 
-            $count = Inventory::whereHas('assetModel', function ($q) use ($inventory) {
-                $q->where('asset_type', $inventory->assetModel->asset_type);
+            $count = Inventory::whereHas('asset', function ($q) use ($asset) {
+                $q->where('asset_type', $asset->asset_type);
             })->count() + 1;
 
             $inventory->asset_tag = "MCT{$year}-{$assetType}" . str_pad($count, 3, '0', STR_PAD_LEFT);
@@ -44,8 +49,8 @@ class Inventory extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function assetModel()
+    public function asset()
     {
-        return $this->belongsTo(AssetModel::class);
+        return $this->belongsTo(Assets::class);
     }
 }
