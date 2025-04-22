@@ -10,7 +10,7 @@ import { getDateString } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
 export default function Inventory({ asset }) {
-    console.log('asset SULOD', asset);
+    console.log('ASSET NI ERICK', asset);
     const formattedCreatedAt = getDateString(asset.created_at);
     const formattedUpdatedAt = getDateString(asset.updated_at);
     const formattedDateAcquired = getDateString(asset.date_acquired);
@@ -40,11 +40,11 @@ export default function Inventory({ asset }) {
                     <InfoCardField label="Asset Tag" value={asset.asset_tag} />
                     <InfoCardField
                         label="Asset Brand"
-                        value={asset.asset_brand}
+                        value={asset.asset?.asset_brand}
                     />
                     <InfoCardField
                         label="Asset Type"
-                        value={asset.asset_type}
+                        value={asset.asset?.asset_type}
                     />
                     <InfoCardField
                         label="Serial Number"

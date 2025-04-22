@@ -13,7 +13,7 @@ class InventoryController extends Controller
     //* DISPLAY TABLE AND DATA IN DATABASE UWU
     public function index()
     {
-        $inventory = Inventory::with('employee')->get();
+        $inventory = Inventory::with(['employee', 'asset'])->get();
         $employee = Employee::all();
         $assets = Assets::all();
         return Inertia::render('Inventory', ['inventory' => $inventory, 'employee' => $employee, 'assets' => $assets]);
@@ -55,7 +55,7 @@ class InventoryController extends Controller
     //* SHOW SPECIFIC ITEM FULL DETAILS ^-^
     public function show($id)
     {
-        $asset = Inventory::with('employee')->findOrFail($id);
+        $asset = Inventory::with(['employee', 'asset'])->findOrFail($id);
 
         return Inertia::render('Inventory/ItemSpecific', [
             'asset' => $asset

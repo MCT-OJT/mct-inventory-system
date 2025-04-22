@@ -40,6 +40,7 @@ import {
 import { useState } from 'react';
 
 export default function Inventory({ inventory, employee, assets }) {
+    console.log('KANIANBG JERVIN ASSETS', inventory);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
@@ -197,8 +198,10 @@ export default function Inventory({ inventory, employee, assets }) {
                                 }
                             >
                                 <TableCell>{asset.asset_tag}</TableCell>
-                                <TableCell>{asset.asset_brand}</TableCell>
-                                <TableCell>{asset.asset_type}</TableCell>
+                                <TableCell>
+                                    {asset.asset?.asset_brand}
+                                </TableCell>
+                                <TableCell>{asset.asset?.asset_type}</TableCell>
                                 <TableCell>{asset.status}</TableCell>
                                 {![
                                     'Available',
