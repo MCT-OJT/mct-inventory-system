@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AssetModel;
+use App\Models\Assets;
 use App\Models\Employee;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
@@ -15,22 +15,21 @@ class InventoryController extends Controller
     {
         $inventory = Inventory::with('employee')->get();
         $employee = Employee::all();
-        $models = AssetModel::all();
-        return Inertia::render('Inventory', ['assets' => $inventory, 'employee' => $employee, 'models' => $models]);
+        $assets = Assets::all();
+        return Inertia::render('Inventory', ['inventory' => $inventory, 'employee' => $employee, 'assets' => $assets]);
     }
 
 
     //* STORE AN ITEM TO INVENTORY <3
     public function store(Request $request)
     {
-        $assetModelId = AssetModel::where('asset_type', $request->asset_type)
-            ->where('model_name', $request->model_name)
+        $assetId = Assets::where('asset_type', $request->asset_type)
+            ->where('asset_brand', $request->asset_brand)
             ->value('id');
 
         $request->validate([
             'serial_number' => 'required|string|unique:inventory,serial_number',
             'asset_tag' => 'string|unique:inventory,asset_tag',
-            'asset_name' => 'required|string',
             'status' => 'required|string',
             'date_acquired' => 'required|date',
             'deployed_date' => 'nullable|date',
@@ -42,8 +41,7 @@ class InventoryController extends Controller
             'user_id' => auth()->id(),
             'serial_number' => $request->serial_number,
             'asset_tag' => $request->asset_tag,
-            'asset_name' => $request->asset_name,
-            'asset_model_id' => $assetModelId,
+            'asset_id' => $assetId,
             'status' => $request->status,
             'date_acquired' => $request->date_acquired,
             'deployed_date' => $request->deployed_date,
