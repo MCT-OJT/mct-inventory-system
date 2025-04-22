@@ -40,12 +40,15 @@ export function AddItem({ employee, assets }) {
 
     //! HERE
     const [selectedAtype, setSelectedAtype] = useState('- Select -');
+    const [selectedBrandName, setSelectedBrandName] = useState('- Select -');
+    const [selectedModelName, setSelectedModelName] = useState('- Select -');
     const [filteredBrands, setFilteredBrands] = useState([]);
+    const [filteredModels, setFilteredModels] = useState([]);
 
-    //! HERE
+    //! ================================================================
     const handleSelectAtype = (asset_type) => {
         setSelectedAtype(asset_type);
-        setSelectedModelName('- Select -');
+        setSelectedBrandName('- Select -');
         setData('asset_type', asset_type);
         const filtered = assets.filter(
             (asset) => asset.asset_type === asset_type,
@@ -53,11 +56,26 @@ export function AddItem({ employee, assets }) {
         setFilteredBrands(filtered);
     };
 
+    const handleSelectAssetBrand = (asset_brand) => {
+        setSelectedBrandName(asset_brand);
+        setSelectedModelName('- Select -');
+        setData('asset_brand', asset_brand);
+        const filtered = assets.filter(
+            (asset) => asset.asset_brand === asset_brand,
+        );
+        setFilteredModels(filtered);
+    };
+
+    const handleSelectModelName = (model_name) => {
+        setSelectedModelName(model_name);
+        setData('model_name', model_name);
+    };
+
+    //! ================================================================
     const { toast } = useToast();
 
     const [selectedAstatus, setSelectedAstatus] = useState('- Select -');
     const [selectedUincharge, setSelectedUincharge] = useState('- Select -');
-    const [selectedBrandName, setSelectedModelName] = useState('- Select -');
 
     const handleSelectAstatus = (type) => {
         setSelectedAstatus(type);
@@ -70,15 +88,11 @@ export function AddItem({ employee, assets }) {
         console.log('handle select emp NAME', name);
     };
 
-    const handleSelectAssetBrand = (asset_brand) => {
-        setSelectedModelName(asset_brand);
-        setData('asset_brand', asset_brand);
-    };
-
     const { data, setData, post, processing, errors, reset } = useForm({
         serial_number: '',
         asset_brand: '',
         asset_type: '',
+        model_name: '',
         status: '',
         date_acquired: '',
         deployed_date: '',
@@ -224,6 +238,54 @@ export function AddItem({ employee, assets }) {
                                                 }
                                             >
                                                 {brand.asset_brand}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.user_incharge && (
+                                <p className="text-red-500">
+                                    {errors.user_incharge}
+                                </p>
+                            )}
+                        </div>
+                        {/*
+                            ASSET MODEL NAME DROPDOWN
+                         */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="user-incharge"
+                                className="text-right"
+                            >
+                                Model Name
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                        )}
+                                    >
+                                        {selectedModelName}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        MODEL NAME
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {filteredModels.map((model) => (
+                                            <DropdownMenuItem
+                                                key={model.model_name}
+                                                onClick={() =>
+                                                    handleSelectModelName(
+                                                        model.model_name,
+                                                    )
+                                                }
+                                            >
+                                                {model.model_name}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>

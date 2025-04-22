@@ -12,6 +12,7 @@ class Assets extends Model
     protected $fillable = [
         'asset_type',
         'asset_brand',
+        'model_name'
     ];
     public function inventories()
     {
