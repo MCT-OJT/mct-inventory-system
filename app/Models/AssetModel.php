@@ -4,19 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-class Employee extends Model
+
+class AssetModel extends Model
 {
     use HasFactory;
-
-    protected $table = 'employees';
+    protected $table = 'asset_models';
 
     protected $fillable = [
-        'id_number',
-        'name',
-        'department'
+        'asset_type',
+        'model_name',
     ];
-
-    public function inventory()
+    public function inventories()
     {
         return $this->hasMany(Inventory::class);
     }
