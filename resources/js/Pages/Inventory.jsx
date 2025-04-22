@@ -39,8 +39,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function Inventory({ assets, employee }) {
-    console.log('ASSETS INVENTORY', assets);
+export default function Inventory({ assets, employee, models }) {
+    console.log('ASSETS INVENTORY PAGE', assets);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
@@ -168,7 +168,7 @@ export default function Inventory({ assets, employee }) {
                             <FileDown />
                             Export Data
                         </Button>
-                        <AddItem employee={employee} />
+                        <AddItem employee={employee} models={models} />
                     </div>
                 </div>
                 <Table>
