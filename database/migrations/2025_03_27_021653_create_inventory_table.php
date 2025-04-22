@@ -20,13 +20,16 @@ return new class extends Migration {
             $table->string(column: 'serial_number');
             $table->string(column: 'asset_tag');
             $table->string(column: 'asset_name');
-            $table->string(column: 'asset_type');
             $table->string(column: 'status');
             $table->string(column: 'date_acquired');
             $table->string(column: 'deployed_date')->nullable();
-            $table->string(column: 'user_incharge')->nullable();
             $table->text(column: 'remarks')->nullable();
+            $table->foreignId('asset_model_id')
+                ->nullable()
+                ->constrained('asset_models')
+                ->cascadeOnDelete();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

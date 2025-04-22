@@ -3,20 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Inventory extends Model
 {
+    use SoftDeletes;
     protected $table = 'inventory';
 
     protected $fillable = [
         'user_id',
         'serial_number',
         'asset_name',
-        'asset_type',
         'status',
         'date_acquired',
         'deployed_date',
         'employee_id',
+        'asset_model_id',
         'remarks'
     ];
 
@@ -25,9 +27,13 @@ class Inventory extends Model
         parent::boot();
 
         static::creating(function ($inventory) {
+            $inventory->load('assetModel');
+            $assetType = strtoupper(substr($inventory->assetModel->asset_type, 0, 3));
             $year = substr($inventory->date_acquired, 2, 2);
-            $assetType = strtoupper(substr($inventory->asset_type, 0, 3));
-            $count = Inventory::where('asset_type', $inventory->asset_type)->count() + 1;
+
+            $count = Inventory::whereHas('assetModel', function ($q) use ($inventory) {
+                $q->where('asset_type', $inventory->assetModel->asset_type);
+            })->count() + 1;
 
             $inventory->asset_tag = "MCT{$year}-{$assetType}" . str_pad($count, 3, '0', STR_PAD_LEFT);
         });
@@ -36,5 +42,10 @@ class Inventory extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class);
+    }
+
+    public function assetModel()
+    {
+        return $this->belongsTo(AssetModel::class);
     }
 }
