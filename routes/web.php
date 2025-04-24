@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //!test
     Route::post('/upload', [FileController::class, 'store']);
+    Route::get('/nas-image/{filename}', [FileController::class, 'show']);
 
 });
 

@@ -9,6 +9,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { getDateString } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
+
 export default function Inventory({ asset }) {
     console.log('ASSET NI ERICK', asset);
     const formattedCreatedAt = getDateString(asset.created_at);
@@ -109,7 +110,12 @@ export default function Inventory({ asset }) {
                     LabelIcon={Images}
                     label="Asset Image"
                     className="row-span-2"
-                ></InfoCard>
+                >
+                    <img
+                        src={`/nas-image/i856xztHYBTuThbGSP65mwoFrbRGJEH0Ioa9LqM6.jpg`}
+                        alt="NAS Image"
+                    />
+                </InfoCard>
             </div>
         </AuthenticatedLayout>
     );
