@@ -10,25 +10,39 @@ import { getDateString } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
 
-export default function Inventory({ asset }) {
-    console.log('ASSET NI ERICK', asset);
-    const formattedCreatedAt = getDateString(asset.created_at);
-    const formattedUpdatedAt = getDateString(asset.updated_at);
-    const formattedDateAcquired = getDateString(asset.date_acquired);
-    const formattedDeployedDate = asset.deployed_date
-        ? getDateString(asset.deployed_date)
+export default function Inventory({
+    inventory,
+    employee,
+    assets,
+    specificAsset,
+}) {
+    // console.log('inventory:', inventory);
+    // console.log('employee:', employee);
+    // console.log('assets:', assets);
+    // console.log('specificAsset:', specificAsset);
+
+    const formattedCreatedAt = getDateString(specificAsset.created_at);
+    const formattedUpdatedAt = getDateString(specificAsset.updated_at);
+    const formattedDateAcquired = getDateString(specificAsset.date_acquired);
+    const formattedDeployedDate = specificAsset.deployed_date
+        ? getDateString(specificAsset.deployed_date)
         : 'N/A';
     return (
         <AuthenticatedLayout>
-            <Head title={`${asset.asset_tag}`} />
+            <Head title={`${specificAsset.asset_tag}`} />
             <div className="ml-12 mr-12 flex justify-between">
                 <Button className="mb-4 mt-12" onClick={() => history.back()}>
                     <Undo2 />
                     Back
                 </Button>
                 <div className="mt-12">
-                    <EditItem asset={asset} />
-                    <DeleteItem id={asset.id} />
+                    <EditItem
+                        inventory={inventory}
+                        employee={employee}
+                        assets={assets}
+                        specificAsset={specificAsset}
+                    />
+                    <DeleteItem id={specificAsset.id} />
                 </div>
             </div>
 
@@ -38,18 +52,21 @@ export default function Inventory({ asset }) {
                     label="Asset Details"
                     className="row-span-2"
                 >
-                    <InfoCardField label="Asset Tag" value={asset.asset_tag} />
+                    <InfoCardField
+                        label="Asset Tag"
+                        value={specificAsset.asset_tag}
+                    />
                     <InfoCardField
                         label="Asset Brand"
-                        value={asset.asset?.asset_brand}
+                        value={specificAsset.asset?.asset_brand}
                     />
                     <InfoCardField
                         label="Asset Type"
-                        value={asset.asset?.asset_type}
+                        value={specificAsset.asset?.asset_type}
                     />
                     <InfoCardField
                         label="Serial Number"
-                        value={asset.serial_number}
+                        value={specificAsset.serial_number}
                     />
                     <InfoCardField
                         label="Date Acquired"
@@ -67,7 +84,7 @@ export default function Inventory({ asset }) {
                         <Label className="text-sm font-normal text-gray-500 dark:text-gray-400">
                             Asset Status
                         </Label>
-                        <Status condition={asset.status} />
+                        <Status condition={specificAsset.status} />
                     </div>
                 </InfoCard>
                 <div className="row-span-2 flex h-full flex-col gap-6">
@@ -82,17 +99,20 @@ export default function Inventory({ asset }) {
                         />
                         <InfoCardField
                             label="ID Number"
-                            value={asset.employee?.id_number ?? 'N/A'}
+                            value={specificAsset.employee?.id_number ?? 'N/A'}
                         />
                         <InfoCardField
                             label="User Incharge"
-                            value={asset.employee?.name ?? 'N/A'}
+                            value={specificAsset.employee?.name ?? 'N/A'}
                         />
                         <InfoCardField
                             label="Department"
-                            value={asset.employee?.department ?? 'N/A'}
+                            value={specificAsset.employee?.department ?? 'N/A'}
                         />
-                        <InfoCardField label="Remarks" value={asset.remarks} />
+                        <InfoCardField
+                            label="Remarks"
+                            value={specificAsset.remarks}
+                        />
                     </InfoCard>
                     <InfoCard
                         LabelIcon={History}
