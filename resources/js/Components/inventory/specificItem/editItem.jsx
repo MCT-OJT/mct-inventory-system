@@ -32,52 +32,98 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useMemo, useState } from 'react';
 
-export function EditItem({ asset }) {
+export function EditItem({ employee, assets, specificAsset }) {
     const { toast } = useToast();
 
-    const [selectedAtype, setSelectedAtype] = useState('- Select -');
-    const [selectedAstatus, setSelectedAstatus] = useState('- Select -');
-    const [selectedUincharge, setSelectedUincharge] = useState('- Select -');
-
-    const handleSelectAtype = (type) => {
-        setSelectedAtype(type);
-        setData('asset_type', type);
-    };
-
-    const handleSelectAstatus = (type) => {
-        setSelectedAstatus(type);
-        setData('status', type);
-    };
-
-    const handleSelectUincharge = (type, id) => {
-        setSelectedUincharge(type);
-        setData('employee_id', id);
-        console.log('handle select emp id', id);
-    };
-
-    const { data, setData, post, processing, errors, reset } = useForm({
-        serial_number: '',
-        asset_brand: '',
-        asset_type: '',
-        status: '',
-        date_acquired: '',
-        deployed_date: '',
-        employee_id: '',
-        remarks: '',
+    const { data, setData, put, processing, errors, reset } = useForm({
+        id: specificAsset.id,
+        serial_number: specificAsset.serial_number || '',
+        asset_brand: specificAsset.asset?.asset_brand || '',
+        asset_type: specificAsset.asset?.asset_type || '',
+        model_name: specificAsset.asset?.model_name || '',
+        status: specificAsset.status || '',
+        date_acquired: specificAsset.date_acquired
+            ? new Date(specificAsset.date_acquired).toISOString().split('T')[0]
+            : '',
+        deployed_date: specificAsset.deployed_date
+            ? new Date(specificAsset.deployed_date).toISOString().split('T')[0]
+            : '',
+        employee_id: specificAsset.employee_id || '',
+        remarks: specificAsset.remarks || '',
     });
+
+    const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
+
+    const uniqueTypes = useMemo(() => {
+        return [...new Set(assets.map((a) => a.asset_type))];
+    }, [assets]);
+
+    const filteredBrands = useMemo(() => {
+        return assets.filter((a) => a.asset_type === data.asset_type);
+    }, [assets, data.asset_type]);
+
+    const filteredModels = useMemo(() => {
+        return assets.filter((a) => a.asset_brand === data.asset_brand);
+    }, [assets, data.asset_brand]);
+
+    const handleChange = (key, value) => {
+        if (key === 'asset_type') {
+            setData({
+                ...data,
+                asset_type: value,
+                asset_brand: '',
+                model_name: '',
+            });
+        } else if (key === 'asset_brand') {
+            setData({
+                ...data,
+                asset_brand: value,
+                model_name: '',
+            });
+        } else {
+            setData({
+                ...data,
+                [key]: value,
+            });
+        }
+    };
+
+    const [open, setOpen] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/inventory', {
+
+        if (!data.asset_brand) {
+            toast({
+                title: 'Error',
+                description: 'Asset brand is required.',
+                className: 'bg-red-300 text-red-900 border-none',
+            });
+            return;
+        }
+
+        if (!data.model_name) {
+            toast({
+                title: 'Error',
+                description: 'Model name is required.',
+                className: 'bg-red-300 text-red-900 border-none',
+            });
+            return;
+        }
+
+        put('/inventory', {
             onSuccess: () => {
                 toast({
                     title: 'Success',
-                    description: 'Successfully added the item.',
+                    description: 'Successfully updated the item.',
                     className: 'bg-green-300 text-green-900 border-none',
                 });
                 reset();
+                setOpen(false);
+                router.visit(`/inventory/${data.id}`);
             },
             onError: () => {
                 toast({
@@ -89,22 +135,8 @@ export function EditItem({ asset }) {
         });
     };
 
-    const assetTypes = [
-        'Monitor',
-        'System Unit',
-        'Laptop',
-        'Server',
-        'UPS',
-        'Printer',
-        'iPad',
-        'Smartphone',
-        'Accessories',
-    ];
-
-    const Astatus = ['Available', 'Deployed', 'Decommissioned', 'Listed'];
-
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="bg-blue-600 text-white hover:bg-blue-700">
                     <FilePen /> Edit Item
@@ -112,13 +144,14 @@ export function EditItem({ asset }) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit Item</DialogTitle>
+                    <DialogTitle>Add Item</DialogTitle>
                     <DialogDescription>
-                        Edit existing record in your inventory.
+                        Add an item to your inventory.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                     <div className="grid gap-4 py-4">
+                        {/* SERIAL NUMBER INPUT FIELD */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="serial" className="text-right">
                                 Serial Number
@@ -127,7 +160,10 @@ export function EditItem({ asset }) {
                                 id="serial"
                                 value={data.serial_number}
                                 onChange={(e) =>
-                                    setData('serial_number', e.target.value)
+                                    handleChange(
+                                        'serial_number',
+                                        e.target.value,
+                                    )
                                 }
                                 className="col-span-3"
                             />
@@ -138,25 +174,9 @@ export function EditItem({ asset }) {
                             )}
                         </div>
 
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="asset-name" className="text-right">
-                                Asset Name
-                            </Label>
-                            <Input
-                                id="asset-name"
-                                value={data.asset_brand}
-                                onChange={(e) =>
-                                    setData('asset_brand', e.target.value)
-                                }
-                                className="col-span-3"
-                            />
-                            {errors.asset_brand && (
-                                <p className="text-red-500">
-                                    {errors.asset_brand}
-                                </p>
-                            )}
-                        </div>
-
+                        {/*
+                            ASSET TYPE DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="asset-type" className="text-right">
                                 Asset Type
@@ -164,7 +184,7 @@ export function EditItem({ asset }) {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className="w-32">
-                                        {selectedAtype}
+                                        {data.asset_type || '- Select Type -'}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
@@ -173,14 +193,17 @@ export function EditItem({ asset }) {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {assetTypes.map((type) => (
+                                        {uniqueTypes.map((asset_type) => (
                                             <DropdownMenuItem
-                                                key={type}
+                                                key={asset_type}
                                                 onClick={() =>
-                                                    handleSelectAtype(type)
+                                                    handleChange(
+                                                        'asset_type',
+                                                        asset_type,
+                                                    )
                                                 }
                                             >
-                                                {type}
+                                                {asset_type}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>
@@ -192,7 +215,107 @@ export function EditItem({ asset }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            ASSET BRAND DROPDOWN
+                         */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="user-incharge"
+                                className="text-right"
+                            >
+                                Asset Brand
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                        )}
+                                    >
+                                        {data.asset_brand || '- Select Type -'}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        ASSET BRAND
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {filteredBrands.map((brand) => (
+                                            <DropdownMenuItem
+                                                key={brand.asset_brand}
+                                                onClick={() =>
+                                                    handleChange(
+                                                        'asset_brand',
+                                                        brand.asset_brand,
+                                                    )
+                                                }
+                                            >
+                                                {brand.asset_brand}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.asset_brand && (
+                                <p className="text-red-500">
+                                    {errors.asset_brand}
+                                </p>
+                            )}
+                        </div>
+                        {/*
+                            ASSET MODEL NAME DROPDOWN
+                         */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="user-incharge"
+                                className="text-right"
+                            >
+                                Model Name
+                            </Label>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-fit justify-start px-3 text-left font-normal',
+                                        )}
+                                    >
+                                        {data.model_name || '- Select Type -'}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        MODEL NAME
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        {filteredModels.map((model) => (
+                                            <DropdownMenuItem
+                                                key={model.model_name}
+                                                onClick={() =>
+                                                    handleChange(
+                                                        'model_name',
+                                                        model.model_name,
+                                                    )
+                                                }
+                                            >
+                                                {model.model_name}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            {errors.model_name && (
+                                <p className="text-red-500">
+                                    {errors.model_name}
+                                </p>
+                            )}
+                        </div>
+                        {/*
+                            DATE ACQUIRED PICKER
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="date-acquired"
@@ -206,11 +329,11 @@ export function EditItem({ asset }) {
                                         variant="outline"
                                         className={cn(
                                             'w-fit justify-start px-3 text-left font-normal',
-                                            !data.date_acquired &&
+                                            !data.date_acquired.date_acquired &&
                                                 'min-w-[120px] text-muted-foreground',
                                         )}
                                     >
-                                        <CalendarIcon />
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
                                         {data.date_acquired ? (
                                             format(
                                                 new Date(data.date_acquired),
@@ -221,21 +344,22 @@ export function EditItem({ asset }) {
                                         )}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent
-                                    className="w-auto p-0"
-                                    align="start"
-                                >
+                                <PopoverContent className="w-auto p-0">
                                     <Calendar
                                         mode="single"
-                                        selected={data.date_acquired}
-                                        onSelect={(date) =>
+                                        selected={
+                                            data.date_acquired
+                                                ? new Date(data.date_acquired)
+                                                : undefined
+                                        }
+                                        onSelect={(date) => {
                                             setData(
                                                 'date_acquired',
                                                 date
                                                     ? format(date, 'yyyy-MM-dd')
                                                     : '',
-                                            )
-                                        }
+                                            );
+                                        }}
                                         initialFocus
                                     />
                                 </PopoverContent>
@@ -246,7 +370,9 @@ export function EditItem({ asset }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            ASSET STATUS DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="status" className="text-right">
                                 Status
@@ -254,7 +380,7 @@ export function EditItem({ asset }) {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="outline" className="w-32">
-                                        {selectedAstatus}
+                                        {data.status || '- Select Type -'}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
@@ -263,14 +389,17 @@ export function EditItem({ asset }) {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {Astatus.map((type) => (
+                                        {Astatus.map((status) => (
                                             <DropdownMenuItem
-                                                key={type}
+                                                key={status}
                                                 onClick={() =>
-                                                    handleSelectAstatus(type)
+                                                    handleChange(
+                                                        'status',
+                                                        status,
+                                                    )
                                                 }
                                             >
-                                                {type}
+                                                {status}
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuGroup>
@@ -280,7 +409,9 @@ export function EditItem({ asset }) {
                                 <p className="text-red-500">{errors.status}</p>
                             )}
                         </div>
-
+                        {/*
+                            DATE DEPLOYED PICKER
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="date-deployed"
@@ -296,12 +427,10 @@ export function EditItem({ asset }) {
                                             'w-fit justify-start px-3 text-left font-normal',
                                             !data.deployed_date &&
                                                 'min-w-[120px] text-muted-foreground',
-                                            selectedAstatus !== 'Deployed' &&
+                                            data.status !== 'Deployed' &&
                                                 'cursor-not-allowed opacity-50',
                                         )}
-                                        disabled={
-                                            selectedAstatus !== 'Deployed'
-                                        }
+                                        disabled={data.status !== 'Deployed'}
                                     >
                                         <CalendarIcon />
                                         {data.deployed_date ? (
@@ -314,15 +443,21 @@ export function EditItem({ asset }) {
                                         )}
                                     </Button>
                                 </PopoverTrigger>
-                                {selectedAstatus === 'Deployed' && (
+                                {data.status === 'Deployed' && (
                                     <PopoverContent
                                         className="w-auto p-0"
                                         align="start"
                                     >
                                         <Calendar
                                             mode="single"
-                                            selected={data.deployed_date}
-                                            onSelect={(date) =>
+                                            selected={
+                                                data.deployed_date
+                                                    ? new Date(
+                                                          data.deployed_date,
+                                                      )
+                                                    : undefined
+                                            }
+                                            onSelect={(date) => {
                                                 setData(
                                                     'deployed_date',
                                                     date
@@ -331,8 +466,8 @@ export function EditItem({ asset }) {
                                                               'yyyy-MM-dd',
                                                           )
                                                         : '',
-                                                )
-                                            }
+                                                );
+                                            }}
                                             initialFocus
                                         />
                                     </PopoverContent>
@@ -344,7 +479,9 @@ export function EditItem({ asset }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            USER INCHARGE DROPDOWN
+                         */}
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label
                                 htmlFor="user-incharge"
@@ -358,14 +495,18 @@ export function EditItem({ asset }) {
                                         variant="outline"
                                         className={cn(
                                             'w-fit justify-start px-3 text-left font-normal',
-                                            selectedAstatus !== 'Deployed' &&
+                                            data.status !== 'Deployed' &&
                                                 'cursor-not-allowed opacity-50',
                                         )}
-                                        disabled={
-                                            selectedAstatus !== 'Deployed'
-                                        }
+                                        disabled={data.status !== 'Deployed'}
                                     >
-                                        {selectedUincharge}
+                                        {data.employee_id
+                                            ? employee.find(
+                                                  (emp) =>
+                                                      emp.id ===
+                                                      data.employee_id,
+                                              )?.name || '- Select Type -'
+                                            : '- Select Type -'}{' '}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-56">
@@ -374,19 +515,19 @@ export function EditItem({ asset }) {
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        {/* {employee.map((emp) => (
+                                        {employee.map((emp) => (
                                             <DropdownMenuItem
                                                 key={emp.id}
                                                 onClick={() =>
-                                                    handleSelectUincharge(
-                                                        emp.name,
+                                                    handleChange(
+                                                        'employee_id',
                                                         emp.id,
                                                     )
                                                 }
                                             >
                                                 {emp.name}
                                             </DropdownMenuItem>
-                                        ))} */}
+                                        ))}
                                     </DropdownMenuGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -396,7 +537,9 @@ export function EditItem({ asset }) {
                                 </p>
                             )}
                         </div>
-
+                        {/*
+                            REMARKS
+                         */}
                         <div className="grid grid-cols-4 items-baseline gap-4">
                             <Label htmlFor="remarks" className="text-right">
                                 Remarks
@@ -406,7 +549,7 @@ export function EditItem({ asset }) {
                                 className="col-span-3 h-20"
                                 value={data.remarks}
                                 onChange={(e) =>
-                                    setData('remarks', e.target.value)
+                                    handleChange('remarks', e.target.value)
                                 }
                             />
                             {errors.remarks && (
@@ -414,6 +557,7 @@ export function EditItem({ asset }) {
                             )}
                         </div>
                     </div>
+                    {/* SAVE CHANGES */}
                     <DialogFooter>
                         <Button
                             type="submit"
