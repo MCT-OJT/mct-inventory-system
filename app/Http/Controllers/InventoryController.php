@@ -7,7 +7,7 @@ use App\Models\Employee;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+use Illuminate\Support\Facades\DB;
 class InventoryController extends Controller
 {
     //* DISPLAY TABLE AND DATA IN DATABASE UWU
@@ -55,10 +55,17 @@ class InventoryController extends Controller
     //* SHOW SPECIFIC ITEM FULL DETAILS ^-^
     public function show($id)
     {
-        $asset = Inventory::with(['employee', 'asset'])->findOrFail($id);
+        $inventory = Inventory::with(['employee', 'asset'])->get();
+        $employee = Employee::all();
+        $assets = Assets::all();
+
+        $specificAsset = Inventory::with(['employee', 'asset'])->findOrFail($id);
 
         return Inertia::render('Inventory/ItemSpecific', [
-            'asset' => $asset
+            'inventory' => $inventory,
+            'employee' => $employee,
+            'assets' => $assets,
+            'specificAsset' => $specificAsset
         ]);
     }
 
@@ -71,4 +78,27 @@ class InventoryController extends Controller
         return redirect()->route('inventory.index');
     }
 
+    //* UPDATE SPECIFIC ITEM RECORN IN DATABASE ARGGGGGHH
+    public function update(Request $request)
+    {
+        $assetId = Assets::where('asset_type', $request->asset_type)
+            ->where('asset_brand', $request->asset_brand)
+            ->value('id');
+
+        $inventoryRecord = Inventory::findOrFail($request->id);
+
+
+        $inventoryRecord->update([
+            'user_id' => auth()->id(),
+            'employee_id' => $request->employee_id,
+            'serial_number' => $request->serial_number,
+            'status' => $request->status,
+            'date_acquired' => $request->date_acquired,
+            'deployed_date' => $request->deployed_date,
+            'remarks' => $request->remarks,
+            'asset_id' => $assetId,
+
+        ]);
+        return back();
+    }
 }
