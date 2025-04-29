@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
     Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
     Route::delete('/inventory/{id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+    Route::put('/inventory', [InventoryController::class, 'update'])->name('inventory.update');
 
     //! TO BE MODIFIED
     Route::get('/sales', function () {
