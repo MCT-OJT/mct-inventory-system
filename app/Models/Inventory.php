@@ -21,27 +21,35 @@ class Inventory extends Model
         'asset_id',
         'remarks'
     ];
-
     public static function boot()
     {
         parent::boot();
 
         static::creating(function ($inventory) {
-            $asset = $inventory->asset;
-
-            if (!$asset) {
-                throw new \Exception("Asset not found for ID: {$inventory->asset_id}");
-            }
-
-            $assetType = strtoupper(substr($asset->asset_type, 0, 3));
-            $year = substr($inventory->date_acquired, 2, 2);
-
-            $count = Inventory::whereHas('asset', function ($q) use ($asset) {
-                $q->where('asset_type', $asset->asset_type);
-            })->count() + 1;
-
-            $inventory->asset_tag = "MCT{$year}-{$assetType}" . str_pad($count, 3, '0', STR_PAD_LEFT);
+            self::generateAssetTag($inventory);
         });
+
+        static::updating(function ($inventory) {
+            self::generateAssetTag($inventory);
+        });
+    }
+
+    protected static function generateAssetTag($inventory)
+    {
+        $asset = $inventory->asset;
+
+        if (!$asset) {
+            throw new \Exception("Asset not found for ID: {$inventory->asset_id}");
+        }
+
+        $assetType = strtoupper(substr($asset->asset_type, 0, 3));
+        $year = substr($inventory->date_acquired, 2, 2);
+
+        $count = Inventory::whereHas('asset', function ($q) use ($asset) {
+            $q->where('asset_type', $asset->asset_type);
+        })->count()+1;
+
+        $inventory->asset_tag = "MCT{$year}-{$assetType}" . str_pad($count, 3, '0', STR_PAD_LEFT);
     }
 
     public function employee()
