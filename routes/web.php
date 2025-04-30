@@ -31,6 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //* METADATA ROUTES
     Route::get('/metadata', [MetadataController::class, 'index'])->name('metadata.index');
+    Route::post('/employee', [MetadataController::class, 'storeEmployee'])->name('metadata.employee.store');
+    Route::post('/assets', [MetadataController::class, 'storeAssets'])->name('metadata.assets.store');
 
     //!test
     Route::post('/upload', [FileController::class, 'store']);
