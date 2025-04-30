@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MetadataController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -28,10 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/inventory/{id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
     Route::put('/inventory', [InventoryController::class, 'update'])->name('inventory.update');
 
-    //! TO BE MODIFIED
-    Route::get('/sales', function () {
-        return Inertia::render('Sales');
-    })->name('sales');
+    //* METADATA ROUTES
+    Route::get('/metadata', [MetadataController::class, 'index'])->name('metadata.index');
 
     //!test
     Route::post('/upload', [FileController::class, 'store']);
