@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('asset_type');
             $table->string('asset_brand');
             $table->string('model_name');
+            $table->string('asset_image');
             $table->timestamps();
         });
     }

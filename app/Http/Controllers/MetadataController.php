@@ -6,6 +6,8 @@ use App\Models\Assets;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+
 class MetadataController extends Controller
 {
     //* DISPLAY TABLE AND DATA IN DATABASE UWU
@@ -24,19 +26,23 @@ class MetadataController extends Controller
             'asset_type' => 'required|string|max:255',
             'asset_brand' => 'required|string|max:255',
             'model_name' => 'required|string|max:255',
-            'file' => 'required|file|max:10240', // max 10MB
+            'file' => 'required|file|max:10240',
         ]);
 
-        // Upload file to FTP (NAS)
         $file = $request->file('file');
-        $path = $file->store('assetImages', 'ftp');
 
-        // Save asset data to database (adjust table/model if needed)
+        $name = Str::slug("{$request->asset_type}_{$request->asset_brand}_{$request->model_name}", '-');
+
+        $extension = $file->getClientOriginalExtension();
+        $filename = "{$name}.{$extension}";
+
+        $path = $file->storeAs('assetImages', $filename, 'ftp');
+
         Assets::create([
             'asset_type' => $request->asset_type,
             'asset_brand' => $request->asset_brand,
             'model_name' => $request->model_name,
-            // 'image_path' => $path,
+            'asset_image' => $path,
         ]);
 
         return redirect()->back();

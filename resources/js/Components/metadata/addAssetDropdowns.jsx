@@ -4,32 +4,31 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/Components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { MonitorSmartphone } from 'lucide-react';
-import { useState } from 'react';
+import { useRef } from 'react';
 
 export function AddAssetDropdowns() {
     const { toast } = useToast();
-    const [file, setFile] = useState(null);
+    const fileInputRef = useRef(null);
 
-    const { data, setData, post, processing, reset } = useForm({
-        id_number: '',
-        name: '',
-        department: '',
+    const { data, setData, processing, reset } = useForm({
+        asset_type: '',
+        asset_brand: '',
+        model_name: '',
+        image: '',
     });
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Prepare form data with asset details and the file
         const formData = new FormData();
         formData.append('asset_type', data.asset_type);
         formData.append('asset_brand', data.asset_brand);
         formData.append('model_name', data.model_name);
-        if (file) formData.append('file', file);
+        formData.append('file', data.image);
 
-        // Send form data to the backend
-        post('/assets', formData, {
-            forceFormData: true, // Ensures FormData is sent correctly
+        router.post('/new-assets', formData, {
+            forceFormData: true,
             onSuccess: () => {
                 toast({
                     title: 'Success',
@@ -37,7 +36,7 @@ export function AddAssetDropdowns() {
                     className: 'bg-green-300 text-green-900 border-none',
                 });
                 reset();
-                setFile(null); // Clear file input
+                fileInputRef.current.value = '';
             },
             onError: () => {
                 toast({
@@ -103,11 +102,12 @@ export function AddAssetDropdowns() {
                         Upload Image
                     </Label>
                     <Input
+                        ref={fileInputRef}
                         id="picture"
                         type="file"
                         accept="image/*"
                         className="w-56 cursor-pointer"
-                        onChange={(e) => setFile(e.target.files[0])}
+                        onChange={(e) => setData('image', e.target.files[0])}
                     />
                 </Card>
             </InfoCard>
