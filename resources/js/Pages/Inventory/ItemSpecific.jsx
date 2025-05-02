@@ -132,11 +132,12 @@ export default function Inventory({
                     label="Asset Image"
                     className="row-span-2"
                     fullContent
+                    contentClassName="h-full"
                 >
                     <img
                         src={assetImage}
                         alt="NAS Image"
-                        className="h-auto w-full object-contain"
+                        className="h-72 w-full object-contain"
                     />
                 </InfoCard>
             </div>
