@@ -8,6 +8,8 @@ use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 class InventoryController extends Controller
 {
     //* DISPLAY TABLE AND DATA IN DATABASE UWU
@@ -61,11 +63,23 @@ class InventoryController extends Controller
 
         $specificAsset = Inventory::with(['employee', 'asset'])->findOrFail($id);
 
+
+        $filename = $specificAsset->asset->asset_image;
+
+        if (!Storage::disk('ftp')->exists($filename)) {
+            abort(404);
+        }
+
+        $file = Storage::disk('ftp')->get($filename);
+        $mime = Storage::disk('ftp')->mimeType($filename);
+        $imageBase64 = 'data:' . $mime . ';base64,' . base64_encode($file);
+
         return Inertia::render('Inventory/ItemSpecific', [
             'inventory' => $inventory,
             'employee' => $employee,
             'assets' => $assets,
-            'specificAsset' => $specificAsset
+            'specificAsset' => $specificAsset,
+            'assetImage' => $imageBase64
         ]);
     }
 

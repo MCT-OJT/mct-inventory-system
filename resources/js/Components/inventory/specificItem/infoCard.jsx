@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-
 export default function InfoCard({
     LabelIcon,
     label,
     children,
     className,
     contentClassName,
+    fullContent = false,
     ...props
 }) {
     return (
@@ -18,7 +18,10 @@ export default function InfoCard({
                 </CardTitle>
             </CardHeader>
             <CardContent
-                className={cn('grid grid-cols-2 gap-4', contentClassName)}
+                className={cn(
+                    fullContent ? 'p-4' : 'grid grid-cols-2 gap-4',
+                    contentClassName,
+                )}
             >
                 {children}
             </CardContent>

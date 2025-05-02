@@ -15,11 +15,12 @@ export default function Inventory({
     employee,
     assets,
     specificAsset,
+    assetImage,
 }) {
     // console.log('inventory:', inventory);
     // console.log('employee:', employee);
     // console.log('assets:', assets);
-    // console.log('specificAsset:', specificAsset);
+    // console.log('specificAsset:', specificAsset.asset?.asset_image);
 
     const formattedCreatedAt = getDateString(specificAsset.created_at);
     const formattedUpdatedAt = getDateString(specificAsset.updated_at);
@@ -130,10 +131,12 @@ export default function Inventory({
                     LabelIcon={Images}
                     label="Asset Image"
                     className="row-span-2"
+                    fullContent
                 >
                     <img
-                        src={`/nas-image/i856xztHYBTuThbGSP65mwoFrbRGJEH0Ioa9LqM6.jpg`}
+                        src={assetImage}
                         alt="NAS Image"
+                        className="h-auto w-full object-contain"
                     />
                 </InfoCard>
             </div>
