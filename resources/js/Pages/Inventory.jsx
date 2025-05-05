@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { router } from '@inertiajs/react';
 
+import ScanQRCode from '@/Components/inventory/scanQrCode';
 import {
     Pagination,
     PaginationContent,
@@ -164,6 +165,7 @@ export default function Inventory({ inventory, employee, assets }) {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
+                        <ScanQRCode />
                         <Button className="bg-green-700 text-white hover:bg-green-800">
                             <FileDown />
                             Export Data
