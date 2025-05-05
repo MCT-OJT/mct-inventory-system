@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\Facades\DNS1DFacade;
+use Illuminate\Support\Facades\Response;
 
 class InventoryController extends Controller
 {
@@ -114,5 +116,14 @@ class InventoryController extends Controller
 
         ]);
         return back();
+    }
+    public function generate($id)
+    {
+        $barcode = DNS1DFacade::getBarcodePNG($id, 'C128');
+
+        return Response::make(base64_decode($barcode), 200, [
+            'Content-Type' => 'image/png',
+            'Content-Disposition' => 'inline; filename="barcode.png"',
+        ]);
     }
 }

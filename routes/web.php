@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/inventory/{id}', [InventoryController::class, 'show'])->name('inventory.show');
     Route::delete('/inventory/{id}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
     Route::put('/inventory', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::get('/barcode/{id}', [InventoryController::class, 'generate']);
 
     //* METADATA ROUTES
     Route::get('/metadata', [MetadataController::class, 'index'])->name('metadata.index');
