@@ -16,38 +16,44 @@ export default function ScanQRCode() {
     const html5QrCodeRef = useRef(null);
 
     useEffect(() => {
-        if (!open) return;
+        let scanner;
 
-        const delay = setTimeout(() => {
-            const scanner = new Html5Qrcode('reader');
-            html5QrCodeRef.current = scanner;
+        if (open) {
+            const delay = setTimeout(() => {
+                scanner = new Html5Qrcode('reader');
+                html5QrCodeRef.current = scanner;
 
-            scanner
-                .start(
-                    { facingMode: 'environment' },
-                    { fps: 10, qrbox: 300 },
-                    (decodedText) => {
-                        scanner.stop().then(() => {
-                            scanner.clear();
-                            setOpen(false);
-                            router.visit(`/inventory/${decodedText}`);
-                        });
-                    },
-                    (error) => console.warn(error),
-                )
-                .catch((err) => {
-                    console.error('QR scanner error:', err);
-                });
-        }, 300);
+                scanner
+                    .start(
+                        { facingMode: 'environment' },
+                        { fps: 10, qrbox: 300 },
+                        (decodedText) => {
+                            scanner.stop().then(() => {
+                                scanner.clear();
+                                html5QrCodeRef.current = null;
+                                setOpen(false);
+                                router.visit(`/inventory/${decodedText}`);
+                            });
+                        },
+                        (error) => console.warn(error),
+                    )
+                    .catch((err) => {
+                        console.error('QR scanner error:', err);
+                    });
+            }, 300);
+
+            return () => clearTimeout(delay);
+        }
 
         return () => {
-            clearTimeout(delay);
             const scanner = html5QrCodeRef.current;
-
-            if (scanner && scanner._isScanning) {
+            if (scanner) {
                 scanner
                     .stop()
-                    .then(() => scanner.clear())
+                    .then(() => {
+                        scanner.clear();
+                        html5QrCodeRef.current = null;
+                    })
                     .catch(() => {});
             }
         };
