@@ -40,7 +40,7 @@ export function DeleteItem({ id }) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
-                    className="ml-3 bg-red-600 text-white hover:bg-red-700"
+                    className="bg-red-600 text-white hover:bg-red-700"
                     onClick={() => setOpen(true)}
                 >
                     <Trash2 /> Delete Item

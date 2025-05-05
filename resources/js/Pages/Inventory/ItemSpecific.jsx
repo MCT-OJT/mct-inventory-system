@@ -1,5 +1,6 @@
 import { DeleteItem } from '@/Components/inventory/specificItem/deleteItem';
 import { EditItem } from '@/Components/inventory/specificItem/editItem';
+import { GenerateBarcode } from '@/Components/inventory/specificItem/generateBarcode';
 import InfoCard from '@/Components/inventory/specificItem/infoCard';
 import InfoCardField from '@/Components/inventory/specificItem/infoCardField';
 import Status from '@/Components/inventory/specificItem/status';
@@ -36,14 +37,21 @@ export default function Inventory({
                     <Undo2 />
                     Back
                 </Button>
-                <div className="mt-12">
-                    <EditItem
-                        inventory={inventory}
-                        employee={employee}
-                        assets={assets}
-                        specificAsset={specificAsset}
-                    />
-                    <DeleteItem id={specificAsset.id} />
+                <div className="ml-12 mt-12 flex gap-4">
+                    <div>
+                        <GenerateBarcode id={specificAsset.id} />
+                    </div>
+                    <div>
+                        <EditItem
+                            inventory={inventory}
+                            employee={employee}
+                            assets={assets}
+                            specificAsset={specificAsset}
+                        />
+                    </div>
+                    <div>
+                        <DeleteItem id={specificAsset.id} />
+                    </div>
                 </div>
             </div>
 
