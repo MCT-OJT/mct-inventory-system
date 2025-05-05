@@ -40,8 +40,8 @@ export default function Inventory({
                 <div className="ml-12 mt-12 flex gap-4">
                     <div>
                         <GenerateQRcode
+                            assetId={specificAsset.id}
                             assetTag={specificAsset.asset_tag}
-                            serialNumber={specificAsset.serial_number}
                         />
                     </div>
                     <div>

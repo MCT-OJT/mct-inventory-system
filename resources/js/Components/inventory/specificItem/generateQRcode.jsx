@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ImageDown } from 'lucide-react';
 
-export function GenerateQRcode({ assetTag, serialNumber }) {
+export function GenerateQRcode({ assetId, assetTag }) {
     const { toast } = useToast();
 
     const handleDownload = async () => {
@@ -19,7 +19,7 @@ export function GenerateQRcode({ assetTag, serialNumber }) {
 
             const [logoImage, qrImage] = await Promise.all([
                 loadImage('/assets/logo-black.png'),
-                loadImage(`/qr-code/${serialNumber}`),
+                loadImage(`/qr-code/${assetId}`),
             ]);
 
             const resolutionMultiplier = 4;
