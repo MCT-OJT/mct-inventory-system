@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Milon\Barcode\Facades\DNS1DFacade;
+use Milon\Barcode\Facades\DNS2DFacade;
 use Illuminate\Support\Facades\Response;
 
 class InventoryController extends Controller
@@ -119,11 +119,11 @@ class InventoryController extends Controller
     }
     public function generate($id)
     {
-        $barcode = DNS1DFacade::getBarcodePNG($id, 'C128');
+        $qrCode = DNS2DFacade::getBarcodePNG($id, 'QRCODE', 4, 4);
 
-        return Response::make(base64_decode($barcode), 200, [
+        return Response::make(base64_decode($qrCode), 200, [
             'Content-Type' => 'image/png',
-            'Content-Disposition' => 'inline; filename="barcode.png"',
+            'Content-Disposition' => 'inline; filename="qr.png"',
         ]);
     }
 }

@@ -1,6 +1,6 @@
 import { DeleteItem } from '@/Components/inventory/specificItem/deleteItem';
 import { EditItem } from '@/Components/inventory/specificItem/editItem';
-import { GenerateBarcode } from '@/Components/inventory/specificItem/generateBarcode';
+import { GenerateQRcode } from '@/Components/inventory/specificItem/generateQRcode';
 import InfoCard from '@/Components/inventory/specificItem/infoCard';
 import InfoCardField from '@/Components/inventory/specificItem/infoCardField';
 import Status from '@/Components/inventory/specificItem/status';
@@ -39,9 +39,9 @@ export default function Inventory({
                 </Button>
                 <div className="ml-12 mt-12 flex gap-4">
                     <div>
-                        <GenerateBarcode
-                            assetId={specificAsset.id}
+                        <GenerateQRcode
                             assetTag={specificAsset.asset_tag}
+                            serialNumber={specificAsset.serial_number}
                         />
                     </div>
                     <div>

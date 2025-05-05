@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { ImageDown } from 'lucide-react';
 
-export function GenerateBarcode({ assetId, assetTag }) {
+export function GenerateQRcode({ assetTag, serialNumber }) {
     const { toast } = useToast();
 
     const handleDownload = async () => {
@@ -17,25 +17,25 @@ export function GenerateBarcode({ assetId, assetTag }) {
                     img.src = src;
                 });
 
-            const [logoImage, barcodeImage] = await Promise.all([
+            const [logoImage, qrImage] = await Promise.all([
                 loadImage('/assets/logo-black.png'),
-                loadImage(`/barcode/${assetId}`),
+                loadImage(`/qr-code/${serialNumber}`),
             ]);
 
             const resolutionMultiplier = 4;
             const logoScale = 0.2 * resolutionMultiplier;
-            const barcodeScale = 2 * resolutionMultiplier;
+            const qrcodeScale = 2 * resolutionMultiplier;
 
             const canvasWidth =
                 Math.max(
                     logoImage.width * logoScale,
-                    barcodeImage.width * barcodeScale,
+                    qrImage.width * qrcodeScale,
                 ) +
                 60 * resolutionMultiplier;
 
             const canvasHeight =
                 logoImage.height * logoScale +
-                barcodeImage.height * barcodeScale +
+                qrImage.height * qrcodeScale +
                 35 * resolutionMultiplier;
 
             const canvas = document.createElement('canvas');
@@ -49,9 +49,8 @@ export function GenerateBarcode({ assetId, assetTag }) {
             const logoX = (canvasWidth - logoImage.width * logoScale) / 2;
             const logoY = 3 * resolutionMultiplier;
 
-            const barcodeX =
-                (canvasWidth - barcodeImage.width * barcodeScale) / 2;
-            const barcodeY =
+            const qrcodeX = (canvasWidth - qrImage.width * qrcodeScale) / 2;
+            const qrcodeY =
                 logoImage.height * logoScale + 4 * resolutionMultiplier;
 
             const fontSize = 12 * resolutionMultiplier;
@@ -60,8 +59,8 @@ export function GenerateBarcode({ assetId, assetTag }) {
 
             const textX = (canvasWidth - ctx.measureText(assetTag).width) / 2;
             const textY =
-                barcodeY +
-                barcodeImage.height * barcodeScale +
+                qrcodeY +
+                qrImage.height * qrcodeScale +
                 15 * resolutionMultiplier;
 
             ctx.drawImage(
@@ -72,11 +71,11 @@ export function GenerateBarcode({ assetId, assetTag }) {
                 logoImage.height * logoScale,
             );
             ctx.drawImage(
-                barcodeImage,
-                barcodeX,
-                barcodeY,
-                barcodeImage.width * barcodeScale,
-                barcodeImage.height * barcodeScale,
+                qrImage,
+                qrcodeX,
+                qrcodeY,
+                qrImage.width * qrcodeScale,
+                qrImage.height * qrcodeScale,
             );
             ctx.fillText(assetTag, textX, textY);
 
