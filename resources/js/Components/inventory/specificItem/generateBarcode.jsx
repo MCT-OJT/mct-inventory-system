@@ -5,45 +5,54 @@ export function GenerateBarcode({ assetId, assetTag }) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Load the barcode image
-        const barcodeImage = new Image();
-        barcodeImage.src = `/barcode/${assetId}`;
-
-        barcodeImage.onload = () => {
-            // Set canvas size based on barcode and text
-            const canvasWidth = barcodeImage.width + 20;
-            const canvasHeight = barcodeImage.height + 60; // Space for text below the barcode
-            canvas.width = canvasWidth;
-            canvas.height = canvasHeight;
-
-            // Draw the barcode image onto the canvas
-            ctx.drawImage(barcodeImage, 10, 10);
-
-            // Set text styles
-            ctx.font = '16px Arial';
-            ctx.fillStyle = 'black';
-
-            // Draw the asset details (name, model, etc.) below the barcode
-            ctx.fillText(
-                `Asset Name: ${assetTag}`,
-                10,
-                barcodeImage.height + 30,
-            );
-            ctx.fillText(
-                `Asset Model: ${'test'}`,
-                10,
-                barcodeImage.height + 50,
-            );
-
-            // Create a downloadable image
-            const dataUrl = canvas.toDataURL('image/png');
-
-            // Trigger the download
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = `${assetTag}.png`;
-            link.click();
+        const loadImage = (src) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = (e) => reject({ src, error: e });
+                img.src = src;
+            });
         };
+
+        Promise.all([
+            loadImage('/assets/logo.png'),
+            loadImage(`/barcode/${assetId}`),
+        ])
+            .then(([logoImage, barcodeImage]) => {
+                console.log('✅ Both images loaded');
+
+                const canvasWidth =
+                    Math.max(logoImage.width, barcodeImage.width) + 20;
+                const canvasHeight =
+                    logoImage.height + barcodeImage.height + 70;
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+
+                ctx.drawImage(logoImage, 10, 10);
+                ctx.drawImage(barcodeImage, 10, logoImage.height + 20);
+
+                ctx.font = '16px Arial';
+                ctx.fillStyle = 'black';
+                ctx.fillText(
+                    `Asset Name: ${assetTag}`,
+                    10,
+                    logoImage.height + barcodeImage.height + 40,
+                );
+                ctx.fillText(
+                    `Asset Model: ${'test'}`,
+                    10,
+                    logoImage.height + barcodeImage.height + 60,
+                );
+
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `${assetTag}.png`;
+                link.click();
+            })
+            .catch(({ src, error }) => {
+                console.error(`❌ Failed to load image: ${src}`, error);
+            });
     };
 
     return (
