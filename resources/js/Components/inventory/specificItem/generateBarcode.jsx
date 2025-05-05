@@ -1,21 +1,13 @@
-import { useState } from 'react';
-
-export function GenerateBarcode({ id }) {
-    const [assetId, setAssetId] = useState(id);
-    const [barcodeUrl, setBarcodeUrl] = useState(null);
-
-    const handleGenerate = () => {
-        const url = `/barcode/${assetId}`;
-        setBarcodeUrl(url); // This triggers the image to display
-    };
-
+import { Button } from '@/components/ui/button';
+import { ImageDown } from 'lucide-react';
+export function GenerateBarcode({ assetId, assetTag }) {
     const handleDownload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
         // Load the barcode image
         const barcodeImage = new Image();
-        barcodeImage.src = barcodeUrl;
+        barcodeImage.src = `/barcode/${assetId}`;
 
         barcodeImage.onload = () => {
             // Set canvas size based on barcode and text
@@ -32,8 +24,16 @@ export function GenerateBarcode({ id }) {
             ctx.fillStyle = 'black';
 
             // Draw the asset details (name, model, etc.) below the barcode
-            ctx.fillText(`Asset Name: ${'asd'}`, 10, barcodeImage.height + 30);
-            ctx.fillText(`Asset Model: ${'asd'}`, 10, barcodeImage.height + 50);
+            ctx.fillText(
+                `Asset Name: ${assetTag}`,
+                10,
+                barcodeImage.height + 30,
+            );
+            ctx.fillText(
+                `Asset Model: ${'test'}`,
+                10,
+                barcodeImage.height + 50,
+            );
 
             // Create a downloadable image
             const dataUrl = canvas.toDataURL('image/png');
@@ -41,45 +41,17 @@ export function GenerateBarcode({ id }) {
             // Trigger the download
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = `barcode_${assetId}.png`;
+            link.download = `${assetTag}.png`;
             link.click();
         };
     };
 
     return (
-        <div className="max-w-sm rounded-lg border p-4 shadow-lg">
-            <h2 className="mb-2 text-xl font-semibold">{'asd'}</h2>
-            <p className="mb-2 text-gray-600">Model: {'asd'}</p>
-
-            <input
-                type="text"
-                value={assetId}
-                onChange={(e) => setAssetId(e.target.value)}
-                placeholder="Enter Asset ID"
-                className="mb-4 mr-2 w-full rounded border p-2"
-            />
-            <button
-                onClick={handleGenerate}
-                className="w-full rounded bg-blue-600 px-4 py-2 text-white"
-            >
-                Generate Barcode
-            </button>
-
-            {barcodeUrl && (
-                <div className="mt-4 text-center">
-                    <img
-                        src={barcodeUrl}
-                        alt="Barcode"
-                        className="mx-auto mb-2"
-                    />
-                    <button
-                        onClick={handleDownload}
-                        className="mt-2 w-full rounded bg-green-600 px-4 py-2 text-white"
-                    >
-                        Download Barcode with Details
-                    </button>
-                </div>
-            )}
-        </div>
+        <Button
+            className="bg-green-600 text-white hover:bg-green-700"
+            onClick={handleDownload}
+        >
+            <ImageDown /> Generate
+        </Button>
     );
 }

@@ -21,7 +21,7 @@ export default function Inventory({
     // console.log('inventory:', inventory);
     // console.log('employee:', employee);
     // console.log('assets:', assets);
-    // console.log('specificAsset:', specificAsset.asset?.asset_image);
+    console.log('specificAsset:', specificAsset.asset_tag);
 
     const formattedCreatedAt = getDateString(specificAsset.created_at);
     const formattedUpdatedAt = getDateString(specificAsset.updated_at);
@@ -39,7 +39,10 @@ export default function Inventory({
                 </Button>
                 <div className="ml-12 mt-12 flex gap-4">
                     <div>
-                        <GenerateBarcode id={specificAsset.id} />
+                        <GenerateBarcode
+                            assetId={specificAsset.id}
+                            assetTag={specificAsset.asset_tag}
+                        />
                     </div>
                     <div>
                         <EditItem
