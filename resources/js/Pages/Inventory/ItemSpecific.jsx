@@ -11,6 +11,18 @@ import { getDateString } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
 
+import { Input } from '@/components/ui/input';
+
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+
 export default function Inventory({
     inventory,
     employee,
@@ -21,7 +33,10 @@ export default function Inventory({
     // console.log('inventory:', inventory);
     // console.log('employee:', employee);
     // console.log('assets:', assets);
-    console.log('specificAsset:', specificAsset.asset_tag);
+    console.log(
+        'specificAsset SULOD =========>:',
+        specificAsset.repair_histories,
+    );
 
     const formattedCreatedAt = getDateString(specificAsset.created_at);
     const formattedUpdatedAt = getDateString(specificAsset.updated_at);
@@ -103,7 +118,7 @@ export default function Inventory({
                     <InfoCard
                         LabelIcon={BookUser}
                         label="Deployment Details"
-                        className="row-span-2 h-2/3"
+                        className="row-span-2 h-full"
                     >
                         <InfoCardField
                             label="Deployed Date"
@@ -126,17 +141,6 @@ export default function Inventory({
                             value={specificAsset.remarks}
                         />
                     </InfoCard>
-                    <InfoCard
-                        LabelIcon={History}
-                        label="Repair History"
-                        className="row-span-2 h-1/3"
-                    >
-                        <InfoCardField
-                            label=""
-                            value={'TEST: Christian Jericho'}
-                        />
-                        <InfoCardField label="" value={'TEST: May 16, 2025'} />
-                    </InfoCard>
                 </div>
                 <InfoCard
                     LabelIcon={Images}
@@ -151,6 +155,122 @@ export default function Inventory({
                         className="h-72 w-full object-contain"
                     />
                 </InfoCard>
+            </div>
+
+            {/*
+                ==========> CODE HERE
+             */}
+            <div className="m-10 rounded-lg border bg-white p-7 shadow">
+                <div className="flex items-center justify-between">
+                    <div className="mb-3">
+                        <div className="flex items-center gap-2 text-xl font-medium">
+                            <History className="text-primary" />
+                            <h1 className="text-2xl font-bold tracking-tight">
+                                Repair History
+                            </h1>
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <Input
+                            type="text"
+                            placeholder="Search"
+                            className="w-52"
+                            // value={searchQuery}
+                            // onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <Table>
+                    <TableCaption>List of current IT assets.</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Reported Date</TableHead>
+                            <TableHead>Issue Description</TableHead>
+                            <TableHead>Repair Status</TableHead>
+                            <TableHead>Repaired By</TableHead>
+                            <TableHead>Repair Notes</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {specificAsset.repair_histories.map((history) => (
+                            <TableRow
+                                key={history.id}
+                                className="cursor-pointer hover:bg-gray-100"
+                            >
+                                <TableCell>{history.created_at}</TableCell>
+                                <TableCell>
+                                    {history.issue_description}
+                                </TableCell>
+                                <TableCell>{history.repair_status}</TableCell>
+                                <TableCell>{history.repaired_by}</TableCell>
+                                <TableCell>{history.repair_notes}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                {/* <div className="flex items-center space-x-2">
+                    <label className="hidden text-sm font-normal md:inline">
+                        Rows per page
+                    </label>
+                    <Select
+                        value={String(rowsPerPage)}
+                        onValueChange={(value) => {
+                            setRowsPerPage(Number(value));
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="h-8 w-[70px] dark:bg-neutral-700">
+                            <SelectValue>{rowsPerPage}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent
+                            side="top"
+                            className="dark:bg-neutral-700"
+                        >
+                            <SelectItem value="5">5</SelectItem>
+                            <SelectItem value="10">10</SelectItem>
+                            <SelectItem value="20">20</SelectItem>
+                            <SelectItem value="50">50</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div> */}
+
+                {/* <Pagination className="mt-5">
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious
+                                href="#"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.max(prev - 1, 1),
+                                    )
+                                }
+                            />
+                        </PaginationItem>
+                        {[...Array(totalPages)].map((_, i) => (
+                            <PaginationItem key={i}>
+                                <PaginationLink
+                                    href="#"
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    className={
+                                        currentPage === i + 1 ? 'font-bold' : ''
+                                    }
+                                >
+                                    {i + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        ))}
+                        <PaginationItem>
+                            <PaginationNext
+                                href="#"
+                                onClick={() =>
+                                    setCurrentPage((prev) =>
+                                        Math.min(prev + 1, totalPages),
+                                    )
+                                }
+                            />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination> */}
             </div>
         </AuthenticatedLayout>
     );
