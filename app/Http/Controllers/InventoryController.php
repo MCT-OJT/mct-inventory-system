@@ -63,7 +63,7 @@ class InventoryController extends Controller
         $employee = Employee::all();
         $assets = Assets::all();
 
-        $specificAsset = Inventory::with(['employee', 'asset'])->findOrFail($id);
+        $specificAsset = Inventory::with(['employee', 'asset', 'repair_histories'])->findOrFail($id);
 
 
         $filename = $specificAsset->asset->asset_image;
@@ -81,7 +81,7 @@ class InventoryController extends Controller
             'employee' => $employee,
             'assets' => $assets,
             'specificAsset' => $specificAsset,
-            'assetImage' => $imageBase64
+            'assetImage' => $imageBase64,
         ]);
     }
 

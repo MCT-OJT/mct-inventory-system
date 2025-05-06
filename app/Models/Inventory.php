@@ -61,4 +61,9 @@ class Inventory extends Model
     {
         return $this->belongsTo(Assets::class);
     }
+
+    public function repair_histories()
+    {
+        return $this->belongsTo(RepairHistory::class);
+    }
 }

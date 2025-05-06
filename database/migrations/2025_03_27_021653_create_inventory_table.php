@@ -27,6 +27,10 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained('assets')
                 ->cascadeOnDelete();
+            $table->foreignId('repair_histories_id')
+                ->nullable()
+                ->constrained('repair_histories')
+                ->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
