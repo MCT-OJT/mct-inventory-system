@@ -215,7 +215,7 @@ export default function Inventory({
                     </div>
                 </div>
                 <Table>
-                    <TableCaption>List of current IT assets.</TableCaption>
+                    <TableCaption>Repair history of this asset.</TableCaption>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Reported Date</TableHead>
