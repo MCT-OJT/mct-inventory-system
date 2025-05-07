@@ -233,34 +233,34 @@ export default function Inventory({
                             >
                                 <TableCell>
                                     {highlightMatch(
-                                        getDateString(history.created_at) ?? '',
+                                        getDateString(history.created_at) || '',
                                         searchQuery,
                                     )}
                                 </TableCell>
 
                                 <TableCell>
                                     {highlightMatch(
-                                        history.issue_description ?? '',
+                                        history.issue_description || '',
                                         searchQuery,
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {highlightMatch(
-                                        history.repair_status ?? '',
-                                        searchQuery,
-                                    )}
-                                </TableCell>
-
-                                <TableCell>
-                                    {highlightMatch(
-                                        history.repaired_by ?? '',
+                                        history.repair_status || '',
                                         searchQuery,
                                     )}
                                 </TableCell>
 
                                 <TableCell>
                                     {highlightMatch(
-                                        history.repair_notes ?? '',
+                                        history.repaired_by || '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
+
+                                <TableCell>
+                                    {highlightMatch(
+                                        history.repair_notes || '',
                                         searchQuery,
                                     )}
                                 </TableCell>

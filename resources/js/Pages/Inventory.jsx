@@ -89,6 +89,23 @@ export default function Inventory({ inventory, employee, assets }) {
         startIndex + rowsPerPage,
     );
 
+    function highlightMatch(text, query) {
+        if (!query) return text;
+
+        const regex = new RegExp(`(${query})`, 'gi');
+        const parts = text.split(regex);
+
+        return parts.map((part, i) =>
+            part.toLowerCase() === query.toLowerCase() ? (
+                <mark key={i} className="bg-yellow-200">
+                    {part}
+                </mark>
+            ) : (
+                part
+            ),
+        );
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title="Dashboard" />
@@ -199,21 +216,42 @@ export default function Inventory({ inventory, employee, assets }) {
                                     router.visit(`/inventory/${asset.id}`)
                                 }
                             >
-                                <TableCell>{asset.asset_tag}</TableCell>
                                 <TableCell>
-                                    {asset.asset?.asset_brand}
+                                    {highlightMatch(
+                                        asset.asset_tag || '',
+                                        searchQuery,
+                                    )}
                                 </TableCell>
-                                <TableCell>{asset.asset?.asset_type}</TableCell>
-                                <TableCell>{asset.status}</TableCell>
+                                <TableCell>
+                                    {highlightMatch(
+                                        asset.asset?.asset_brand || '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    {highlightMatch(
+                                        asset.asset?.asset_type || '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    {highlightMatch(
+                                        asset.status || '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
                                 {![
                                     'Available',
                                     'Decommissioned',
                                     'Listed',
                                 ].includes(selectedStatus) && (
                                     <TableCell>
-                                        {asset.employee?.name || ''}
+                                        {highlightMatch(
+                                            asset.employee?.name || '',
+                                            searchQuery,
+                                        )}
                                     </TableCell>
-                                )}{' '}
+                                )}
                             </TableRow>
                         ))}
                     </TableBody>
