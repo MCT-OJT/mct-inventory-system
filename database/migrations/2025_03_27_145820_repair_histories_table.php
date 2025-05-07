@@ -12,6 +12,10 @@ return new class extends Migration {
     {
         Schema::create('repair_histories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('inventory_id')
+            ->nullable()
+            ->constrained('inventory')
+            ->cascadeOnDelete();
             $table->string(column: 'issue_description');
             $table->string(column: 'repair_status');
             $table->string(column: 'repaired_by');

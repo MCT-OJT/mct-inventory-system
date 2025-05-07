@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Assets;
 use App\Models\Employee;
 use App\Models\Inventory;
+use App\Models\RepairHistory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,6 @@ class InventoryController extends Controller
 
         $specificAsset = Inventory::with(['employee', 'asset', 'repair_histories'])->findOrFail($id);
 
-
         $filename = $specificAsset->asset->asset_image;
 
         if (!Storage::disk('ftp')->exists($filename)) {
@@ -81,7 +81,7 @@ class InventoryController extends Controller
             'employee' => $employee,
             'assets' => $assets,
             'specificAsset' => $specificAsset,
-            'assetImage' => $imageBase64,
+            'assetImage' => $imageBase64
         ]);
     }
 

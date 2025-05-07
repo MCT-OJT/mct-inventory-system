@@ -14,8 +14,9 @@ class RepairHistory extends Model
         'repaired_by',
         'repair_notes'
     ];
-    public function inventories()
+
+    public function inventory()
     {
-        return $this->hasMany(Inventory::class);
+        return $this->belongsTo(Inventory::class);
     }
 }

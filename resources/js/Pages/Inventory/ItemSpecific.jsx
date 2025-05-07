@@ -14,6 +14,14 @@ import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
     Table,
     TableBody,
     TableCaption,
@@ -22,6 +30,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useState } from 'react';
 
 export default function Inventory({
     inventory,
@@ -30,13 +39,7 @@ export default function Inventory({
     specificAsset,
     assetImage,
 }) {
-    // console.log('inventory:', inventory);
-    // console.log('employee:', employee);
-    // console.log('assets:', assets);
-    console.log(
-        'specificAsset SULOD =========>:',
-        specificAsset.repair_histories,
-    );
+    console.log('REPAIR HISTORY =========>:', specificAsset);
 
     const formattedCreatedAt = getDateString(specificAsset.created_at);
     const formattedUpdatedAt = getDateString(specificAsset.updated_at);
@@ -44,6 +47,37 @@ export default function Inventory({
     const formattedDeployedDate = specificAsset.deployed_date
         ? getDateString(specificAsset.deployed_date)
         : 'N/A';
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const filteredAssets = specificAsset.repair_histories.filter((asset) =>
+        Object.values(asset).some((value) =>
+            value?.toString().toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
+    );
+
+    const totalPages = Math.ceil(filteredAssets.length / 3);
+    const startIndex = (currentPage - 1) * 3;
+    const paginatedAssets = filteredAssets.slice(startIndex, startIndex + 3);
+
+    function highlightMatch(text, query) {
+        if (!query) return text;
+
+        const regex = new RegExp(`(${query})`, 'gi');
+        const parts = text.split(regex);
+
+        return parts.map((part, i) =>
+            part.toLowerCase() === query.toLowerCase() ? (
+                <mark key={i} className="bg-yellow-200">
+                    {part}
+                </mark>
+            ) : (
+                part
+            ),
+        );
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title={`${specificAsset.asset_tag}`} />
@@ -175,8 +209,8 @@ export default function Inventory({
                             type="text"
                             placeholder="Search"
                             className="w-52"
-                            // value={searchQuery}
-                            // onChange={(e) => setSearchQuery(e.target.value)}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
                 </div>
@@ -192,49 +226,50 @@ export default function Inventory({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {specificAsset.repair_histories.map((history) => (
+                        {paginatedAssets.map((history) => (
                             <TableRow
                                 key={history.id}
                                 className="cursor-pointer hover:bg-gray-100"
                             >
-                                <TableCell>{history.created_at}</TableCell>
                                 <TableCell>
-                                    {history.issue_description}
+                                    {highlightMatch(
+                                        getDateString(history.created_at) ?? '',
+                                        searchQuery,
+                                    )}
                                 </TableCell>
-                                <TableCell>{history.repair_status}</TableCell>
-                                <TableCell>{history.repaired_by}</TableCell>
-                                <TableCell>{history.repair_notes}</TableCell>
+
+                                <TableCell>
+                                    {highlightMatch(
+                                        history.issue_description ?? '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    {highlightMatch(
+                                        history.repair_status ?? '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
+
+                                <TableCell>
+                                    {highlightMatch(
+                                        history.repaired_by ?? '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
+
+                                <TableCell>
+                                    {highlightMatch(
+                                        history.repair_notes ?? '',
+                                        searchQuery,
+                                    )}
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-                {/* <div className="flex items-center space-x-2">
-                    <label className="hidden text-sm font-normal md:inline">
-                        Rows per page
-                    </label>
-                    <Select
-                        value={String(rowsPerPage)}
-                        onValueChange={(value) => {
-                            setRowsPerPage(Number(value));
-                            setCurrentPage(1);
-                        }}
-                    >
-                        <SelectTrigger className="h-8 w-[70px] dark:bg-neutral-700">
-                            <SelectValue>{rowsPerPage}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent
-                            side="top"
-                            className="dark:bg-neutral-700"
-                        >
-                            <SelectItem value="5">5</SelectItem>
-                            <SelectItem value="10">10</SelectItem>
-                            <SelectItem value="20">20</SelectItem>
-                            <SelectItem value="50">50</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div> */}
 
-                {/* <Pagination className="mt-5">
+                <Pagination className="mt-5">
                     <PaginationContent>
                         <PaginationItem>
                             <PaginationPrevious
@@ -270,7 +305,7 @@ export default function Inventory({
                             />
                         </PaginationItem>
                     </PaginationContent>
-                </Pagination> */}
+                </Pagination>
             </div>
         </AuthenticatedLayout>
     );
