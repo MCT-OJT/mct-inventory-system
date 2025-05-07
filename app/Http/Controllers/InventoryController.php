@@ -117,6 +117,8 @@ class InventoryController extends Controller
         ]);
         return back();
     }
+
+    //* BARCODE GENERATOR FOR A SPECIFIC ASSET
     public function generate($id)
     {
         $qrCode = DNS2DFacade::getBarcodePNG($id, 'QRCODE', 4, 4);
@@ -125,5 +127,28 @@ class InventoryController extends Controller
             'Content-Type' => 'image/png',
             'Content-Disposition' => 'inline; filename="qr.png"',
         ]);
+    }
+
+    //* STORE AN ITEM TO INVENTORY <3
+    public function storeRepairHistory(Request $request)
+    {
+        $request->validate([
+            'issue_description' => 'required|string',
+            'repair_status' => 'required|string',
+            'repaired_by' => 'required|string',
+            'repair_notes' => 'required|string'
+
+
+        ]);
+
+        RepairHistory::create([
+            'inventory_id' => $request->inventory_id,
+            'issue_description' => $request->issue_description,
+            'repair_status' => $request->repair_status,
+            'repaired_by' => $request->repaired_by,
+            'repair_notes' => $request->repair_notes
+        ]);
+
+        return redirect()->back();
     }
 }

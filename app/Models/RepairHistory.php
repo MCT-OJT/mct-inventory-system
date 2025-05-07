@@ -9,6 +9,7 @@ class RepairHistory extends Model
     protected $table = 'repair_histories';
 
     protected $fillable = [
+        'inventory_id',
         'issue_description',
         'repair_status',
         'repaired_by',

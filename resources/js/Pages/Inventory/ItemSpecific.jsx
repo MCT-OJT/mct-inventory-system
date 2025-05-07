@@ -13,6 +13,7 @@ import { BookUser, History, Images, OctagonAlert, Undo2 } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 
+import { AddRepairHistory } from '@/Components/inventory/specificItem/addRepairHistory';
 import {
     Pagination,
     PaginationContent,
@@ -39,7 +40,7 @@ export default function Inventory({
     specificAsset,
     assetImage,
 }) {
-    console.log('REPAIR HISTORY =========>:', specificAsset);
+    console.log('REPAIR HISTORY =========>:', specificAsset.id);
 
     const formattedCreatedAt = getDateString(specificAsset.created_at);
     const formattedUpdatedAt = getDateString(specificAsset.updated_at);
@@ -212,13 +213,14 @@ export default function Inventory({
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
+                        <AddRepairHistory assetId={specificAsset.id} />
                     </div>
                 </div>
                 <Table>
                     <TableCaption>Repair history of this asset.</TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Reported Date</TableHead>
+                            <TableHead>Record Created</TableHead>
                             <TableHead>Issue Description</TableHead>
                             <TableHead>Repair Status</TableHead>
                             <TableHead>Repaired By</TableHead>
