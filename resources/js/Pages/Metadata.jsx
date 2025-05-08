@@ -6,7 +6,7 @@ import Register from './Auth/Register';
 export default function Metadata() {
     return (
         <AuthenticatedLayout>
-            <Head title="Sales" />
+            <Head title="Metadata" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-5xl sm:px-6 lg:px-8">

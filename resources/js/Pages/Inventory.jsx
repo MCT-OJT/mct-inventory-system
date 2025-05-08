@@ -148,7 +148,7 @@ export default function Inventory({ inventory, employee, assets }) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Dashboard" />
+            <Head title="Inventory" />
             <div className="m-10 flex gap-4">
                 <Card
                     Icon={<CircleCheckBig className="text-green-600" />}
