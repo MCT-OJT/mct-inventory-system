@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\MetadataController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -10,7 +11,7 @@ use App\Http\Controllers\FileController;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        // 'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
@@ -30,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/inventory', [InventoryController::class, 'update'])->name('inventory.update');
     Route::get('/qr-code/{id}', [InventoryController::class, 'generate']);
     Route::post('/repair', [InventoryController::class, 'storeRepairHistory'])->name('inventory.storeRepairHistory');
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 
     //* METADATA ROUTES
     Route::get('/metadata', [MetadataController::class, 'index'])->name('metadata.index');

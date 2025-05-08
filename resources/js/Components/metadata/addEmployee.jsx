@@ -41,9 +41,9 @@ export function AddEmployee() {
             <InfoCard
                 LabelIcon={UserRound}
                 label="Add New Employee"
-                className="basis-1/3"
+                className="flex-1"
             >
-                <div className="col-span-4">
+                <div className="col-span-11">
                     <Label htmlFor="idNumber">ID Number</Label>
                     <Input
                         id="idNumber"
@@ -52,7 +52,7 @@ export function AddEmployee() {
                         onChange={(e) => setData('id_number', e.target.value)}
                     />
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-11">
                     <Label htmlFor="name">Name</Label>
                     <Input
                         id="name"
@@ -61,7 +61,7 @@ export function AddEmployee() {
                         onChange={(e) => setData('name', e.target.value)}
                     />
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-11">
                     <Label htmlFor="department">Department</Label>
                     <Input
                         id="department"

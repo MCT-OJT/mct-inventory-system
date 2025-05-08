@@ -1,11 +1,16 @@
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import InfoCard from '@/Components/inventory/specificItem/infoCard';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+import { useToast } from '@/hooks/use-toast';
+import { useForm } from '@inertiajs/react';
+import { UserRound } from 'lucide-react';
 
 export default function Register() {
+    const { toast } = useToast();
+
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -17,25 +22,36 @@ export default function Register() {
         e.preventDefault();
 
         post(route('register'), {
+            onSuccess: () => {
+                toast({
+                    title: 'Success',
+                    description: 'Successfully registered a user.',
+                    className: 'bg-green-300 text-green-900 border-none',
+                });
+            },
+            onError: () => {
+                toast({
+                    title: 'Failed',
+                    description: 'Something went wrong.',
+                    className: 'bg-red-300 text-red-900 border-none',
+                });
+            },
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Register" />
+        <form onSubmit={submit}>
+            <InfoCard LabelIcon={UserRound} label="Add User" className="flex-1">
+                <div className="col-span-12">
+                    <Label htmlFor="user_name">Name</Label>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
+                    <Input
+                        id="user_name"
                         name="name"
                         value={data.name}
-                        className="mt-1 block w-full"
+                        className="w-full"
                         autoComplete="name"
-                        isFocused={true}
                         onChange={(e) => setData('name', e.target.value)}
                         required
                     />
@@ -43,15 +59,15 @@ export default function Register() {
                     <InputError message={errors.name} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                <div className="col-span-12">
+                    <Label htmlFor="email">Email</Label>
 
-                    <TextInput
+                    <Input
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="w-full"
                         autoComplete="username"
                         onChange={(e) => setData('email', e.target.value)}
                         required
@@ -60,15 +76,15 @@ export default function Register() {
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                <div className="col-span-12">
+                    <Label htmlFor="password">Password</Label>
 
-                    <TextInput
+                    <Input
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="w-full"
                         autoComplete="new-password"
                         onChange={(e) => setData('password', e.target.value)}
                         required
@@ -77,13 +93,12 @@ export default function Register() {
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel
-                        htmlFor="password_confirmation"
-                        value="Confirm Password"
-                    />
+                <div className="col-span-12">
+                    <Label htmlFor="password_confirmation">
+                        Confirm Password
+                    </Label>
 
-                    <TextInput
+                    <Input
                         id="password_confirmation"
                         type="password"
                         name="password_confirmation"
@@ -102,19 +117,14 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    <Link
-                        href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                    >
-                        Already registered?
-                    </Link>
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+                <Button
+                    type="submit"
+                    className="w-32 bg-green-700 text-white hover:bg-green-800"
+                    disabled={processing}
+                >
+                    {processing ? 'Saving...' : 'Register'}
+                </Button>
+            </InfoCard>
+        </form>
     );
 }

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronFirst, ChevronLast, MoreVertical } from 'lucide-react';
+import { ChevronFirst, ChevronLast } from 'lucide-react';
 import { createContext, useContext, useState } from 'react';
 import ApplicationLogo from './ApplicationLogo';
 
@@ -31,18 +31,32 @@ export default function Sidebar({ children }) {
                         <ul className="flex-1 px-3">{children}</ul>
                     </SidebarContext.Provider>
 
-                    <div className="flex border-t p-3">
-                        {/* <img src={profile} className="h-10 w-10 rounded-md" /> */}
+                    <div className="flex w-full border-t p-3">
                         <div
-                            className={`flex items-center justify-between overflow-hidden transition-all duration-150 ease-linear ${expanded ? 'ml-3 w-60' : 'w-0'} `}
+                            className={`overflow-hidden transition-[margin,width] duration-300 ease-in-out ${
+                                expanded ? 'ml-3 w-60' : 'ml-0 w-0'
+                            }`}
                         >
-                            <div className="leading-4">
-                                <h4 className="font-semibold">{user.name}</h4>
-                                <span className="text-xs text-gray-600">
+                            <div
+                                className={`transition-opacity delay-100 duration-300 ${
+                                    expanded ? 'opacity-100' : 'opacity-0'
+                                }`}
+                            >
+                                <h4 className="whitespace-nowrap font-semibold text-white">
+                                    {user.name}
+                                </h4>
+                                <span className="whitespace-nowrap text-xs text-gray-300">
                                     {user.email}
                                 </span>
+                                <Link
+                                    href={route('logout')}
+                                    method="post"
+                                    as="button"
+                                    className="mt-2 w-full rounded-md bg-primary p-1 text-center text-sm font-bold text-white hover:bg-darkerPrimary"
+                                >
+                                    Log Out
+                                </Link>
                             </div>
-                            <MoreVertical size={20} />
                         </div>
                     </div>
                 </nav>
