@@ -1,12 +1,13 @@
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import { Button } from '@/components/ui/button';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+import logo from '../../../../public/assets/logo-black.png';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -32,6 +33,11 @@ export default function Login({ status, canResetPassword }) {
             )}
 
             <form onSubmit={submit}>
+                <img
+                    src={logo}
+                    alt="Logo"
+                    className="mx-auto h-36 w-36 object-contain"
+                />
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -68,6 +74,7 @@ export default function Login({ status, canResetPassword }) {
                 <div className="mt-4 block">
                     <label className="flex items-center">
                         <Checkbox
+                            className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500"
                             name="remember"
                             checked={data.remember}
                             onChange={(e) =>
@@ -81,18 +88,13 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                    <Button
+                        type="submit"
+                        className="bg-primary text-white hover:bg-darkerPrimary"
+                        disabled={processing}
+                    >
+                        {processing ? 'Logging in...' : 'Log In'}
+                    </Button>
                 </div>
             </form>
         </GuestLayout>
