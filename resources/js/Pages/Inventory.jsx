@@ -30,7 +30,10 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { getDateString } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import {
     Archive,
     CircleCheckBig,
@@ -41,11 +44,48 @@ import {
 import { useState } from 'react';
 
 export default function Inventory({ inventory, employee, assets }) {
-    console.log('KANIANBG JERVIN ASSETS', inventory);
+    console.log('INVENTORY DATA =======>>>>>>>>', inventory);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedStatus, setSelectedStatus] = useState(null);
+    const dateNow = new Date().toISOString().split('T')[0];
+
+    const exportToExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('My Data');
+
+        worksheet.columns = [
+            { header: 'Asset Tag', key: 'asset_tag', width: 20 },
+            { header: 'Serial Number', key: 'serial_number', width: 30 },
+            { header: 'Date Acquired', key: 'date_acquired', width: 20 },
+            { header: 'Status', key: 'status', width: 20 },
+            { header: 'Remarks', key: 'remarks', width: 40 },
+            { header: 'Record Created', key: 'created_at', width: 20 },
+            { header: 'Updated At', key: 'updated_at', width: 20 },
+        ];
+
+        inventory.forEach((item) => {
+            worksheet.addRow({
+                ...item,
+                date_acquired: getDateString(item.date_acquired),
+                created_at: getDateString(item.created_at),
+                updated_at: getDateString(item.updated_at),
+            });
+        });
+
+        worksheet.getRow(1).eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFCCE5FF' },
+            };
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), `INVENTORY DATA AS OF ${dateNow}.xlsx`);
+    };
 
     const getStatusLastUpdated = (status) => {
         const filteredAssets = inventory
@@ -183,10 +223,14 @@ export default function Inventory({ inventory, employee, assets }) {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <ScanQRCode />
-                        <Button className="bg-green-700 text-white hover:bg-green-800">
+                        <Button
+                            onClick={exportToExcel}
+                            className="bg-green-700 text-white hover:bg-green-800"
+                        >
                             <FileDown />
                             Export Data
                         </Button>
+
                         <AddItem employee={employee} assets={assets} />
                     </div>
                 </div>
