@@ -1,7 +1,4 @@
-<p align="center">
-<img src=https://github.com/user-attachments/assets/58bcfa02-d795-4c52-a55d-361325f5e60a width="200" height="200">
-
-</p>
+<p align="center"><img src=https://github.com/user-attachments/assets/58bcfa02-d795-4c52-a55d-361325f5e60a ></p>
 
 <p align="center">
 <a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
