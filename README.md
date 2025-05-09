@@ -1,10 +1,10 @@
 <p align="center"><img src=https://github.com/user-attachments/assets/58bcfa02-d795-4c52-a55d-361325f5e60a ></p>
 
 <p align="center">
-## Integrated IT system.
 </p>
+## **This text is bold**
 
-## About Laravel
+## About Laravels
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
