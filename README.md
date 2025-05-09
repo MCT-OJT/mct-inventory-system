@@ -2,7 +2,7 @@
 
 <p align="center">
 </p>
-***This text is bold***
+*This text is bold*
 
 ## About Laravels
 
