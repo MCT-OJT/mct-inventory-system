@@ -1,63 +1,54 @@
 <p align="center"><img src=https://github.com/user-attachments/assets/58bcfa02-d795-4c52-a55d-361325f5e60a ></p>
 
-<p align="center">
-</p>
-*This text is bold*
+## Readme guide for intallation and running
 
-## About Laravels
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This Integrated system starts as inventory system and envisioned to be an integrated system for IT department in MCT (Including IT asset borrower, payroll, etc.) 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Fresh Installation for the system
 
-## Learning Laravel
+### Prerequisites before installation
+Make sure the following dependencies are downloaded, see installation guide for each dependencies in the internet.
+- Node.js, [official download site](https://nodejs.org/dist/v22.15.0/node-v22.15.0-x64.msi).
+- Composer, [official download site](https://getcomposer.org/Composer-Setup.exe).
+- Xampp, [official download site](https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16-installer.exe).
+- Git, [official download site](https://github.com/git-for-windows/git/releases/download/v2.49.0.windows.1/Git-2.49.0-64-bit.exe).
+- VsCode, [official download site](https://code.visualstudio.com/Download)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Dependencies and configuration set up
+Assuming all dependencies are installed properly, proceed with these steps below.
+- For xampp, go to `This PC > Windocs (C:) > xampp > php > open php.ini with notepad > ctrl + f and search ;extension=gd > remove semi-colon(;) > search again for ;extension=zip` and also uncomment semi colon.
+- For GitHub, go to the [MCT-OJT](https://github.com/MCT-OJT) organization in GitHub. Go to _Repositories_ then click _mct-inventory-system_, click code, copy the link from _HTTPS_, go to any folder in your pc, right click then open _GitBas_h, enter command `git clone "the link you copied"` _ex. git clone https://example.com_, once done open VsCode and open folder repository.
+- In the VsCode, open terminal and enter command `composer install` next is `npm install`.
+- The system will need an .env file, copy that .env file and paste it to root folder.
+⚠️ .env file consist of sensitive informations please be careful.
+- Enter command in VsCode terminal `php artisan migrate` and select _yes_.
+-  ℹ️ This dependencies and configuration set up is a one time process only so you only need to do this process once, if done then proceed to Running the Application guide.
+  
+## Running the application
+- Open Xampp and start the _Apache_ and _MySQL_ modules
+- In the VsCode, open two terminals, for the application server and database server. In _terminal one_ enter command `php artisan serve`, in _terminal two_ enter command `npm run dev`. Both commands should be up or running when coding to run the program.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Code maintenance and updation
+Please note that we use GitHub to streamline development, if not familiar kindly have a glimpse what is it about, especially the important concepts (git pull, git push, merge conflicts, etc.).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- After each coding please make sure to make a push to the repository or enter command `git push origin main` and also if the repository is advance like for example Jervin coded yesterday and he updated the based code (main repository in GitHub), make sure to enter command `git pull origin main` to update your local repository (the one in your PC).
 
-## Laravel Sponsors
+## Guide for repository structure
+Please take note that the system is developed using the following technologies: Laravel, ReactJS, Xampp, MySQL, and other dependencies.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Laravel as fullstack framework for backend process.
+- ReactJS for frontend UI.
+- Xampp for serving the application and database servers locally (local PC/development PC).
+- MySQL as main database management system.
+- Other dependencies like time formatter, routers, etc. (see package.lock)
 
-### Premium Partners
+## Important folders for the repository
+- _App_, contains _Controllers_ and _Models_ which are backend codes, this is where most of the time for backend coding takes place.
+- _database_, contains codes for table creation and field definitions.
+- _public_, contains assets like pictures ex. logo of the system.
+- _resources > js_, contains the codes for UI, please note that as much as possible, use the concept of _reusable components_ for performance (see details about this in the net).
+- _routes_, contains the defintions where the application will go _ex. '/inventory'_ will go to that page, configure it here.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Most of the time mao rana nga mga folders ang ma open perme pero naay instance maopen gyapon nang uban.
