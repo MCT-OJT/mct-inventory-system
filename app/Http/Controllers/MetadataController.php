@@ -19,7 +19,8 @@ class MetadataController extends Controller
         //  return Inertia::render('Inventory', ['inventory' => $inventory, 'employee' => $employee, 'assets' => $assets]);
         return Inertia::render('Metadata');
     }
-
+    
+    //* STORE NEW ASSETS FOR DROPDOWN
     public function storeAssets(Request $request)
     {
         $request->validate([
@@ -47,7 +48,7 @@ class MetadataController extends Controller
 
         return redirect()->back();
     }
-
+    //* STORE NEW EMPLOYEE FOR DROPDOWN
     public function storeEmployee(Request $request)
     {
         $request->validate([
