@@ -22,7 +22,7 @@ Assuming all dependencies are installed properly, proceed with these steps below
 - For GitHub, go to the [MCT-OJT](https://github.com/MCT-OJT) organization in GitHub. Go to _Repositories_ then click _mct-inventory-system_, click code, copy the link from _HTTPS_, go to any folder in your pc, right click then open _GitBas_h, enter command `git clone "the link you copied"` _ex. git clone https://example.com_, once done open VsCode and open folder repository.
 - In the VsCode, open terminal and enter command `composer install` next is `npm install`.
 - The system will need an .env file, copy that .env file and paste it to root folder.
-⚠️ .env file consist of sensitive informations please be careful.
+⚠️ .env file consist of sensitive informations please be careful.(make sure that there is a . before the word env for example .env)
 - Enter command in VsCode terminal `php artisan migrate` and select _yes_.
 -  ℹ️ This dependencies and configuration set up is a one time process only so you only need to do this process once, if done then proceed to Running the Application guide.
   
