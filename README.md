@@ -18,7 +18,7 @@ Make sure the following dependencies are downloaded, see installation guide for 
 
 ### Dependencies and configuration set up
 Assuming all dependencies are installed properly, proceed with these steps below.
-- For xampp, go to `This PC > Windocs (C:) > xampp > php > open php.ini with notepad > ctrl + f and search ;extension=gd > remove semi-colon(;) > search again for ;extension=zip > search again for ;extension=ftp` and also uncomment semi colon.
+- For xampp, go to `This PC > Windocs (C:) > xampp > php > open php.ini with notepad > ctrl + f and search ;extension=gd > remove semi-colon(;) > search again for ;extension=zip, ;extension=ftp, ;extension=sqlite3, extension=pdo_sqlite` and also uncomment semi colon.
 - For GitHub, go to the [MCT-OJT](https://github.com/MCT-OJT) organization in GitHub. Go to _Repositories_ then click _mct-inventory-system_, click code, copy the link from _HTTPS_, go to any folder in your pc, right click then open _GitBas_h, enter command `git clone "the link you copied"` _ex. git clone https://example.com_, once done open VsCode and open folder repository.
 - In the VsCode, open terminal and enter command `composer install` next is `npm install`.
 - The system will need an .env file, copy that .env file and paste it to root folder.
